@@ -25,7 +25,6 @@ export const templateData: TemplateProps[] = [
         "https://mfudfrexjmgxidwugcyw.supabase.co/storage/v1/object/public/templates/moderno/full_page.png",
     },
     link: "https://aahrbitx-template-1.netlify.app",
-    price: "4200 ₹",
     tags: ["Next.js", "ViewTransitions", "Seo Optimized", "Tailwind CSS"],
     rating: 4.8,
     seobility:
@@ -66,7 +65,6 @@ export const templateData: TemplateProps[] = [
     id: "2",
     title: "Higgly Template",
     link: "https://aahrbitx-template-2.netlify.app/",
-    price: "3500 ₹",
     slug: "higgly-template",
     description: "A Saas template for your startup",
     imageUrls: {
@@ -127,7 +125,6 @@ export const templateData: TemplateProps[] = [
     id: "3",
     title: "Metafy Template",
     link: "https://aahrbitx-template-3.netlify.app/",
-    price: "3500 ₹",
     slug: "metafy-template",
     description: "",
     imageUrls: {

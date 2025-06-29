@@ -81,7 +81,6 @@ export default function PriceBreakdown({ template }: Props) {
                 <td className="px-3 py-2 text-gray-800 dark:text-white">
                   <span
                     className={cn(hasOffer && "line-through opacity-60")}
-                    title={item.price === "DIY" && "Do It Yourself"}
                   >
                     {typeof item.price === "number"
                       ? item.price.toLocaleString("en-IN")

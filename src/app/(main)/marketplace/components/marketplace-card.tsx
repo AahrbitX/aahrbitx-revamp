@@ -6,7 +6,7 @@ import { TemplateProps } from "@/types/Marketplace";
 function MarketPlaceCard(props: Partial<TemplateProps>) {
   const { id, title, description, imageUrls, comingSoon } = props;
 
-  const fullpageImage = imageUrls.fullpage;
+  const fullpageImage = imageUrls!.fullpage;
 
   return (
     <Link

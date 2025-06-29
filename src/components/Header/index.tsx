@@ -7,6 +7,8 @@ import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import { InteractiveHoverButton } from "../ui/interactive-hover-button";
 import { ScrollProgress } from "../ui/scroll-progress";
+import { useAuth } from "@/providers/auth-provider";
+import UserAvatar from "../Common/UserAvatar";
 
 const Header = () => {
   // Navbar toggle
@@ -39,6 +41,8 @@ const Header = () => {
   };
 
   const usePathName = usePathname();
+
+  const {isAuth} = useAuth();
 
   return (
     <>
@@ -100,7 +104,7 @@ const Header = () => {
                 </button>
                 <nav
                   id="navbarCollapse"
-                  className={`navbar absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-white px-6 py-4 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100 ${
+                  className={`navbar absolute right-0 z-30 w-[250px] rounded border-[.5px] border-body-color/50 bg-background px-6 py-4 duration-300 dark:border-body-color/20 dark:bg-dark lg:visible lg:static lg:w-auto lg:border-none lg:!bg-transparent lg:p-0 lg:opacity-100  ${
                     navbarOpen
                       ? "visibility top-full opacity-100"
                       : "invisible top-[120%] opacity-0"
@@ -139,7 +143,7 @@ const Header = () => {
                               </span>
                             </p>
                             <div
-                              className={`submenu relative left-0 top-full rounded-sm bg-white transition-[top] duration-300 group-hover:opacity-100 dark:bg-dark lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
+                              className={`submenu relative left-0 top-full rounded-sm bg-background transition-[top] duration-300 group-hover:opacity-100 dark:bg-dark lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full ${
                                 openIndex === index ? "block" : "hidden"
                               }`}
                             >
@@ -160,7 +164,17 @@ const Header = () => {
                   </ul>
                   {/* Add Sign In and Sign Up Buttons */}
                   <div className="mt-4 border-t border-gray-300 pt-4 dark:border-gray-700 lg:hidden">
-                    <Link
+                    {
+                      isAuth ? (
+                        <Link
+                          href="/dashboard"
+                          className="flex items-center justify-start gap-3 w-full text-left text-base font-medium text-dark hover:opacity-70 dark:text-white "
+                        >
+                        <UserAvatar compact/> Dashboard
+                        </Link>
+                      ) : (
+                        <>
+                        <Link
                       href="/signin"
                       className="block w-full px-4 py-2 text-center text-base font-medium text-dark hover:opacity-70 dark:text-white"
                     >
@@ -170,15 +184,28 @@ const Header = () => {
                       className="block w-full px-4 py-2 text-center mt-2"
                       link="/signup"
                       text="Sign Up"
-                    />
+                    /></>
+                      )
+                    }
+                    
                   </div>
                 </nav>
               </div>
 
               <div className="flex items-center justify-end pr-16 lg:pr-0">
-                <Link
+                  {
+                    isAuth ? (
+                      <Link
+                        href="/dashboard"
+                        className="hidden items-center justify-start gap-3 px-7 py-3 text-base font-medium text-dark hover:opacity-80 dark:text-white md:flex"
+                      >
+                        <UserAvatar compact/> Dashboard
+                      </Link>
+                    ) : (
+                      <>
+                    <Link
                   href="/signin"
-                  className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-70 dark:text-white md:block"
+                  className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-80 dark:text-white md:block"
                 >
                   Sign In
                 </Link>
@@ -187,6 +214,9 @@ const Header = () => {
                   link="/signup"
                   text="Sign Up"
                 />
+                      </>
+                    )
+                  }
                 <div>
                   <ThemeToggler />
                 </div>

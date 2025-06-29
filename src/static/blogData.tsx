@@ -9,7 +9,7 @@ const blogData: Blog[] = [
       "Usually, we all imagine the future of Health Care, Do we think anything about traditional Ayurveda techniques? No right, Here is the creative Idea, I researched.",
     image:
       "https://miro.medium.com/v2/resize:fit:720/format:webp/1*pS9_ZB7828QSWtQ1xJUoIg.jpeg",
-    author: Authors.find((a) => (a.name = "Abin Justinkumaravel")),
+    author: Authors.find((a) => (a.name = "Abin Justinkumaravel"))!,
     tags: ["AI", "Ayurveda", "Machine Learning"],
     publishDate: "Jul 13, 2024",
     external_link:
@@ -23,7 +23,7 @@ const blogData: Blog[] = [
       "Hey guys, welcome back to another blog. In this blog, we will explore and get a deep understanding of Why machine learning and where we use it. If you are a beginner in machine learning, this blog will be handy.",
     image:
       "https://miro.medium.com/v2/resize:fit:720/format:webp/1*VzegkAgYolkRN3JXeQCSEg.png",
-    author: Authors.find((a) => (a.name = "Abin Justinkumaravel")),
+    author: Authors.find((a) => (a.name = "Abin Justinkumaravel"))!,
     tags: ["AI", "Computer Science", "Machine Learning"],
     publishDate: "Jul 13, 2024",
     external_link:
@@ -36,7 +36,7 @@ const blogData: Blog[] = [
       "Have you ever wondered how two simple numbers, zero and one, can transform the world? Think about it — these numbers can automate tasks in your business, guide you through tough decisions, or even replace some human jobs in the future. ",
     image:
       "https://miro.medium.com/v2/resize:fit:640/format:webp/1*WWIB8NdEtD_avQZzLxWZug.jpeg",
-    author: Authors.find((a) => (a.name = "Abin Justinkumaravel")),
+    author: Authors.find((a) => (a.name = "Abin Justinkumaravel"))!,
     tags: ["Machine Learning", "Beginner", "Artificialintelligence"],
     publishDate: "Jul 6, 2024",
     external_link:
@@ -49,7 +49,7 @@ const blogData: Blog[] = [
       "Do you ever wake up in the morning wondering if you should grab an umbrella or shorts? With a basic weather app, you can have the answer at your fingertips! In this blog post, we'll guide you through creating a simple weather app using HTML, CSS, and JavaScript.",
     image:
       "https://miro.medium.com/v2/resize:fit:720/format:webp/1*tNXjpHRy0KayYG3QZcsPkw.jpeg",
-    author: Authors.find((a) => (a.name = "Abin Justinkumaravel")),
+    author: Authors.find((a) => (a.name = "Abin Justinkumaravel"))!,
     tags: ["JavaScript", "Website Development", "Weather Apps", "Programing"],
     publishDate: "Jul 6, 2024",
     external_link:

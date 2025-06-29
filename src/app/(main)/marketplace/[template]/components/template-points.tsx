@@ -2,6 +2,11 @@ import { TemplateProps } from "@/types/Marketplace";
 import React from "react";
 
 function TemplatePoints({ template }: { template: TemplateProps }) {
+
+  if(!template.keyAspects) {
+    return;
+  }
+
   return (
     <div className="my-4">
       <h2 className="text-center text-xl  font-semibold md:text-start">

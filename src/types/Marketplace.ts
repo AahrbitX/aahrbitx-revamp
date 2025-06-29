@@ -9,7 +9,6 @@ export type TemplateProps = {
     metaImage: { src: string; alt: string };
     fullpage: string;
   };
-  price: string;
   link: string;
   tags: string[];
   rating: number;

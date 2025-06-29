@@ -8,7 +8,7 @@ const checkIcon = (
 );
 
 const AboutSectionOne = () => {
-  const List = ({ text }) => (
+  const List = ({ text }:{text:string}) => (
     <p className="mb-5 flex items-center text-lg gap-2 font-medium text-body-color">
       <span className="flex size-[30px] flex-shrink-0 items-center justify-center rounded-md bg-primary bg-opacity-10 text-primary">
         {checkIcon}

@@ -31,7 +31,7 @@ export const generateMetadata = async ({
   );
 
   if (!template) {
-    return;
+    return {};
   }
 
   return {
@@ -55,9 +55,9 @@ async function TemplatePage({ params }: Props) {
 
   const template = templateData.find((template) => template.id === id);
 
-  // if (!template || template.comingSoon) {
-  //   notFound();
-  // }
+  if (!template || template.comingSoon) {
+    notFound();
+  }
 
   const { imageUrls } = template;
   const flatImages = [...imageUrls.illustrations, imageUrls.metaImage];

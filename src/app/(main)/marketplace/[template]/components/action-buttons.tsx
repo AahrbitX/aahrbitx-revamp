@@ -9,6 +9,10 @@ function ActionButtons({ template }: { template: TemplateProps }) {
     (s) => s.name === "secondary",
   );
 
+  if(!primaryColor || !secondaryColor) {
+    return;
+  }
+
   return (
     <div className="flex w-full gap-4 transition-colors duration-300 *:flex-1">
       <button
@@ -32,7 +36,7 @@ function ActionButtons({ template }: { template: TemplateProps }) {
           style={{ color: getContrastColor(primaryColor?.value) }}
         />
         <span style={{ color: getContrastColor(primaryColor?.value) }}>
-          Buy for {template.price}
+          Buy for {template.priceBreakdown.selfService[0].price}  &#x20b9;
         </span>
       </button>
     </div>

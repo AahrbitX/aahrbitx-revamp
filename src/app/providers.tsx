@@ -1,13 +1,17 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-// import { ReactLenis } from "lenis/react";
+import { SupabaseAuthProvider } from "@/providers/auth-provider";
+import { SmoothScrollProvider } from "@/providers/smooth-scroll";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    // <ReactLenis root>
-    <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
-      {children}
-    </ThemeProvider>
+    <SupabaseAuthProvider>
+      <SmoothScrollProvider>
+        <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
+          {children}
+        </ThemeProvider>
+      </SmoothScrollProvider>
+    </SupabaseAuthProvider>
   );
 }
