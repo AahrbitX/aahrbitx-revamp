@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar"
 import { DashboardProvider } from "./context";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Dashboard",
@@ -47,7 +48,7 @@ export default function DashboardLayout({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                <Link href="/dashboard">Dashboard</Link>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>

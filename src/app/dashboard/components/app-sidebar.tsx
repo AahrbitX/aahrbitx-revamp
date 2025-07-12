@@ -6,10 +6,10 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  Users,
 } from "lucide-react"
 
 import { NavMain } from "./nav-main"
-// import { NavProjects } from "./nav-projects"
 import { NavUser } from "./nav-user"
 import { TeamSwitcher } from "./team-switcher"
 import {
@@ -23,11 +23,25 @@ import {
 const data = {
   navMain: [
     {
+      title: "Users",
+      icon: Users,
+      isActive: false,
+      items: [
+        {
+          title: "All Users",
+          url: "/dashboard/users",
+        },
+      ],
+    },
+    {
       title: "Products",
-      url: "/dashboard/products",
       icon: SquareTerminal,
       isActive: true,
       items: [
+        {
+          title: "All Products",
+          url: "/dashboard/products",
+        },
         {
           title: "Exora",
           url: "/dashboard/products/exora",
@@ -36,7 +50,6 @@ const data = {
     },
     {
       title: "Sales",
-      url: "#",
       icon: PieChart,
       isActive: true,
       items: [
@@ -52,9 +65,8 @@ const data = {
     },
     {
       title: "Services",
-      url: "/dashboard/services",
       icon: LayoutGrid,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "Web Designs",
@@ -64,9 +76,8 @@ const data = {
     },
     {
       title: "Settings",
-      url: "/settings",
       icon: Settings2,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: "General",
@@ -93,14 +104,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher  />
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser  />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

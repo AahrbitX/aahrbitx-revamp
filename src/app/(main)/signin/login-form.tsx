@@ -18,14 +18,14 @@ export function LoginForm({
   const [isPending, setIsPending] = useState(false)
   const router = useRouter()
 
-  const {setUser,setSession} = useAuth();
+  const { setUser, setAuthSession } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsPending(true)
     const formData = new FormData(event.currentTarget)
 
-    const {data, error} = await login(formData)
+    const {data, error, appUser} = await login(formData)
 
     if (error) {
       setErrorMessage(error)
@@ -33,8 +33,11 @@ export function LoginForm({
       return
     }
 
-    setUser({...data!.user, role:"user"})
-    setSession(data!.session)
+    if(appUser){
+      setUser(appUser)
+    }
+
+    setAuthSession(data!.session)
     setIsPending(false)
 
     router.push("/dashboard")

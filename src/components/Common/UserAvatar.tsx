@@ -4,7 +4,6 @@ import React from 'react'
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "@/components/ui/avatar"
 import { useAuth } from '@/providers/auth-provider'
 import { cn } from '@/lib/utils'
@@ -17,7 +16,7 @@ function UserAvatar({
 
     const {user} = useAuth();
 
-    const userName : string = user?.user_metadata?.full_name || user?.email || "User";
+    const userName : string = user?.email || "User";
 
     const fallbackText = userName.slice(0, 2).toUpperCase();
 

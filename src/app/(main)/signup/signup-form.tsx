@@ -19,22 +19,25 @@ export function SignupForm({
   const [isPending, setIsPending] = useState(false)
   const router = useRouter()
 
-  const {setUser, setSession } = useAuth()
+  const {setUser, setAuthSession } = useAuth()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsPending(true)
     const formData = new FormData(event.currentTarget)
 
-    const {data,error} = await signup(formData)
+    const {data,error,appUser} = await signup(formData)
     if (error) {
       setErrorMessage(error)
       setIsPending(false)
       return
     }
 
-    setUser({...data!.user!, role:"user"})
-    setSession(data!.session)
+    if(appUser){
+      setUser(appUser)
+    }
+
+    setAuthSession(data!.session)
     setIsPending(false)
 
     router.push("/info?signup-success=true")

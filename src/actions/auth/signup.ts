@@ -1,8 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-
+import getCurrUser from '../user/getCurrUser'
 import { createClient } from '@/utils/supabase/server'
 
 export async function signup(formData: FormData) {
@@ -23,7 +22,9 @@ export async function signup(formData: FormData) {
     return { data: null, error: error.message }
   }
 
+  const appUser = await getCurrUser(signupData.user!.id)
+
   revalidatePath('/', 'layout')
-  
-  return { data: signupData, error: null }
+
+  return { data: signupData, error: null, appUser }
 }

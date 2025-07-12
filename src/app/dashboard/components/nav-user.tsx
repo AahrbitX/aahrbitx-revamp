@@ -42,16 +42,16 @@ export function NavUser() {
     return null
   }
 
-  const userName = AppUser.user_metadata?.full_name || AppUser.email || "User"
+  const userName =  AppUser.email || "User"
   const userEmail = AppUser.email || "user@example.com"
   const userInitials = userName.slice(0, 2).toUpperCase()
-  const userAvatar = AppUser.user_metadata?.avatar_url || null
+  const userAvatar =  null
 
   const user = {
     name: userName,
     email: userEmail,
     avatar: userAvatar,
-    role: AppUser.role || "user",
+    role: AppUser.app_role || "user",
   }
 
   const RoleLogo = (() => {
@@ -77,7 +77,7 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
                 <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -96,7 +96,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
                   <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

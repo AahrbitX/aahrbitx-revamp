@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 
 import { createClient } from '@/utils/supabase/server'
+import getCurrUser from '../user/getCurrUser'
 
 export async function login(formData: FormData) {
   const supabase = await createClient()
@@ -24,11 +25,14 @@ export async function login(formData: FormData) {
     return  { data : null, error: error.message }
   }
 
+  const appUser = await getCurrUser(loginData.user!.id);
+
   revalidatePath('/', 'layout')
   
   return {
     data: loginData,
     error: null,
+    appUser
   };
 }
 
