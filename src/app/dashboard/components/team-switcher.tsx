@@ -20,6 +20,8 @@ import {
 
 import { teamsData } from "@/static/teamsData"
 import { useDashboard } from "../context"
+import { Separator } from "@radix-ui/react-separator"
+import Link from "next/link"
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar()
@@ -71,6 +73,16 @@ export function TeamSwitcher() {
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}
+            <Separator className="my-1" />
+          <DropdownMenuItem className="gap-2 p-2" asChild>
+            <Link href="/dashboard/organisations/new">
+              <div className="flex size-6 items-center justify-center rounded-md border">
+                <Plus className="size-3.5 shrink-0" />
+              </div>
+              New Organization
+              <DropdownMenuShortcut>⌘N</DropdownMenuShortcut>
+            </Link>
+          </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

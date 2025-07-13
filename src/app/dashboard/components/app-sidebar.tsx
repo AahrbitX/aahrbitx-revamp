@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  Globe,
   LayoutGrid,
   PieChart,
   Settings2,
@@ -43,23 +44,50 @@ const data = {
           url: "/dashboard/products",
         },
         {
-          title: "Exora",
-          url: "/dashboard/products/exora",
-        },
+          title: "Templates",
+          url: "/dashboard/products/templates",
+        }
       ],
+    },
+    {
+      title:"Exora",
+      icon: Globe,
+      isActive: false,
+      items: [
+        {
+          title:"Overview",
+          url: "/dashboard/exora",
+        },
+        {
+          title:"Inbox",
+          url: "/dashboard/exora/inbox"
+        },
+        {
+          title:"Billing",
+          url: "/dashboard/exora/billing"
+        },
+        {
+          title:"Channels",
+          url: "/dashboard/exora/channels"
+        },
+        {
+          title:"Reports",
+          url: "/dashboard/exora/reports"
+        },
+      ]
     },
     {
       title: "Sales",
       icon: PieChart,
-      isActive: true,
+      isActive: false,
       items: [
-        {
-          title: "Templates",
-          url: "/dashboard/templates",
-        },
         {
           title: "Revenue",
           url: "/dashboard/revenue",
+        },
+        {
+          title: "Transactions",
+          url: "/dashboard/transactions",
         },
       ],
     },
@@ -68,6 +96,10 @@ const data = {
       icon: LayoutGrid,
       isActive: false,
       items: [
+        {
+          title: "Products Service",
+          url: "/dashboard/services/products-service",
+        },
         {
           title: "Web Designs",
           url: "/dashboard/services/web-designs",
