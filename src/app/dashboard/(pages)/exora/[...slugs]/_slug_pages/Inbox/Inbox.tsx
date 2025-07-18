@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { addChunk, updateChunks, editKnowledgeBase, deleteChunks, getChunksByOrg } from "@/lib/api";
+import { addChunk, editKnowledgeBase, deleteChunks, getChunksByOrg, deepScrape, uploadFile } from "@/lib/api";
+import { useAuth } from "@/providers/auth-provider"; // Add this import
 
 // interface InboxContentProps {
 //   knowledgeBase: any[];
@@ -17,7 +18,7 @@ export default function InboxContent() {
 
   const [knowledgeBase, setKnowledgeBase] = useState<any[]>([])
   const [loadingKB, setLoadingKB] = useState(false)
-  const clientId = process.env.NEXT_PUBLIC_CLIENT_ID!
+  const clientId = "5182fe22-21a1-410a-93e6-e0d029101e52"
 
    useEffect(() => {
     async function fetchKB() {
@@ -189,13 +190,71 @@ export default function InboxContent() {
     setAddLoading(false);
   };
 
+  // Add Document Modal state
+  const [addDocModal, setAddDocModal] = useState(false);
+  const [docType, setDocType] = useState<"url"|"file"|null>(null);
+  const [urlInput, setUrlInput] = useState("");
+  const [fileInput, setFileInput] = useState<File|null>(null);
+  const [addDocLoading, setAddDocLoading] = useState(false);
+
+  // Add Document handlers
+  const { user: AppUser } = useAuth(); // Get the real user
+  const handleAddDoc = async () => {
+    setAddDocLoading(true);
+    try {
+      if (docType === "url") {
+        // Call deepScrape API
+        const res = await deepScrape({
+          url: urlInput,
+          org_id: clientId,
+          user_id: AppUser?.id ?? "",
+          email: AppUser?.email ?? "",
+          name: AppUser?.email ?? "",
+          role: AppUser?.app_role || "user",
+          file_type: "web",
+          channel: "web"
+        });
+        if (res.status === "success") {
+          setToast({type: "success", message: "URL document added"});
+          setAddDocModal(false);
+          setDocType(null);
+          setUrlInput("");
+        } else {
+          setToast({type: "error", message: "Failed to add URL document"});
+        }
+      } else if (docType === "file" && fileInput) {
+        const res = await uploadFile({
+          file: fileInput,
+          org_id: clientId,
+          user_id: AppUser?.id ?? "",
+          email: AppUser?.email ?? "",
+          name: AppUser?.email ?? "",
+          role: AppUser?.app_role || "user",
+          file_type: fileInput.type.split("/")[1] || "pdf",
+          channel: "web"
+        });
+        if (res.status === "success") {
+          setToast({type: "success", message: "File document added"});
+          setAddDocModal(false);
+          setDocType(null);
+          setFileInput(null);
+        } else {
+          setToast({type: "error", message: "Failed to add file document"});
+        }
+      }
+    } catch {
+      setToast({type: "error", message: "Network error"});
+    }
+    setAddDocLoading(false);
+  };
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Knowledge Base</h1>
         <div className="flex items-center space-x-4">
           <Input placeholder="Search messages..." className="bg-[#1e293b] border-slate-600 text-white w-64" />
-          {/* Add Document button can be added here if needed */}
+          <Button variant="outline" size="sm" onClick={() => setAddDocModal(true)}>Add Document</Button>
         </div>
       </div>
       <div className="p-4 space-y-6">
@@ -383,6 +442,63 @@ export default function InboxContent() {
                 disabled={addLoading}
               >Cancel</Button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Add Document Modal */}
+      {addDocModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
+          <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-bold text-white mb-4">Add Document</h2>
+            {!docType && (
+              <div className="flex space-x-4 mb-4">
+                <Button variant="outline" size="sm" onClick={() => setDocType("url")}>URL Based Doc</Button>
+                <Button variant="outline" size="sm" onClick={() => setDocType("file")}>Document Based Doc</Button>
+              </div>
+            )}
+            {docType === "url" && (
+              <div className="mb-4">
+                <label className="block text-sm text-slate-300 mb-1">Document URL</label>
+                <Input
+                  type="text"
+                  value={urlInput}
+                  onChange={e => setUrlInput(e.target.value)}
+                  placeholder="https://example.com"
+                  disabled={addDocLoading}
+                  className="mb-2"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddDoc}
+                  disabled={addDocLoading || !urlInput}
+                >{addDocLoading ? "Adding..." : "Submit"}</Button>
+              </div>
+            )}
+            {docType === "file" && (
+              <div className="mb-4">
+                <label className="block text-sm text-slate-300 mb-1">Upload Document</label>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={e => setFileInput(e.target.files?.[0] || null)}
+                  disabled={addDocLoading}
+                  className="mb-2"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddDoc}
+                  disabled={addDocLoading || !fileInput}
+                >{addDocLoading ? "Uploading..." : "Submit"}</Button>
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => { setAddDocModal(false); setDocType(null); setUrlInput(""); setFileInput(null); }}
+              disabled={addDocLoading}
+            >Cancel</Button>
           </div>
         </div>
       )}

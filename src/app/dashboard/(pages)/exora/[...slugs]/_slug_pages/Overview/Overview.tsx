@@ -1,39 +1,107 @@
+'use client';
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, RefreshCw } from "lucide-react";
+import { getOrgUsage } from "@/lib/api";
+import { useAuth } from "@/providers/auth-provider";
 
-export default function OverviewContent() {
+interface OrgUsage {
+  total_sessions: number;
+  total_input_tokens: number;
+  total_output_tokens: number;
+  avg_response_time_ms: number;
+  max_response_time_ms: number;
+  unique_users: number;
+  top_questions: string[];
+  daily_usage: [string, number][];
+  weekly_usage: [string, number][];
+  monthly_usage: [string, number][];
+}
+
+export default function Overview() {
+
+
+const [data, setData] = useState<OrgUsage | null>(null);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState("");
+const { user: AppUser } = useAuth();
+
+// const fetchData = async () => {
+//   setLoading(true);
+//   setError("");
+//   try {
+
+//   } catch (err: any) {
+//     setError(err?.message || "Unknown error");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+    const fetchData = async () => {
+    setLoading(true);
+    setError("");
+      try {
+        const json = await getOrgUsage(AppUser?.id ?? '');
+        setData(json);
+      } catch (err: any) {
+        setError(err?.message || "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+  };
+
+useEffect(() => {
+  fetchData();
+  // eslint-disable-next-line
+}, []);
+
+  // Helper for usage chart
+const usageChart = data?.daily_usage?.map((item: [string, number]) => item[1]) || [40, 60, 80, 90, 70, 85, 95, 100];
+const usageLabels = data?.daily_usage?.map((item: [string, number]) => item[0].slice(5)) || ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
+
   return (
     <div className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-white">Overview</h2>
+        <Button variant="ghost" size="sm" onClick={fetchData} disabled={loading} className="flex items-center gap-2">
+          <RefreshCw className={loading ? "animate-spin" : ""} size={16} />
+          Refresh
+        </Button>
+      </div>
+      {error && (
+        <div className="mb-4 text-red-400 text-sm">{error}</div>
+      )}
       {/* Top Metrics */}
       <div className="grid grid-cols-4 gap-6 mb-8">
         <Card className="bg-[#1e293b] border-slate-700">
           <CardContent className="p-6">
-            <div className="text-xs text-slate-400 mb-2">Total listens</div>
-            <div className="text-2xl font-bold text-white mb-1">5,097</div>
-            <div className="text-xs text-emerald-400">▲ +33.46%</div>
+            <div className="text-xs text-slate-400 mb-2">Total sessions</div>
+            <div className="text-2xl font-bold text-white mb-1">{loading ? "..." : data?.total_sessions ?? "-"}</div>
+            <div className="text-xs text-emerald-400">Unique users: {loading ? "..." : data?.unique_users ?? "-"}</div>
           </CardContent>
         </Card>
         <Card className="bg-[#1e293b] border-slate-700">
           <CardContent className="p-6">
-            <div className="text-xs text-slate-400 mb-2">Downloads</div>
-            <div className="text-2xl font-bold text-white mb-1">47,403</div>
-            <div className="text-xs text-red-400">▼ -112.45%</div>
+            <div className="text-xs text-slate-400 mb-2">Total input tokens</div>
+            <div className="text-2xl font-bold text-white mb-1">{loading ? "..." : data?.total_input_tokens ?? "-"}</div>
+            <div className="text-xs text-emerald-400">Output tokens: {loading ? "..." : data?.total_output_tokens ?? "-"}</div>
           </CardContent>
         </Card>
         <Card className="bg-[#1e293b] border-slate-700">
           <CardContent className="p-6">
-            <div className="text-xs text-slate-400 mb-2">Average time</div>
-            <div className="text-2xl font-bold text-white mb-1">25.81</div>
-            <div className="text-xs text-emerald-400">▲ +102.52%</div>
+            <div className="text-xs text-slate-400 mb-2">Avg response time</div>
+            <div className="text-2xl font-bold text-white mb-1">{loading ? "..." : (data?.avg_response_time_ms ? `${data.avg_response_time_ms} ms` : "-")}</div>
+            <div className="text-xs text-emerald-400">Max: {loading ? "..." : (data?.max_response_time_ms ? `${data.max_response_time_ms} ms` : "-")}</div>
           </CardContent>
         </Card>
         <Card className="bg-[#1e293b] border-slate-700">
           <CardContent className="p-6">
-            <div className="text-xs text-slate-400 mb-2">Episode time</div>
-            <div className="text-2xl font-bold text-white mb-1">45.4 min</div>
-            <div className="text-xs text-emerald-400">▲ +4.46%</div>
+            <div className="text-xs text-slate-400 mb-2">Top questions</div>
+            <div className="text-2xl font-bold text-white mb-1">{loading ? "..." : (data?.top_questions?.length ?? 0)}</div>
+            <div className="text-xs text-emerald-400">{!loading && data?.top_questions?.slice(0, 2)?.join(", ")}</div>
           </CardContent>
         </Card>
       </div>
@@ -44,72 +112,41 @@ export default function OverviewContent() {
           {/* Large Number Display */}
           <Card className="bg-[#1e293b] border-slate-700">
             <CardContent className="p-6">
-              <div className="text-4xl font-bold text-white mb-2">301,097</div>
-              <div className="text-sm text-emerald-400 mb-6">▲ +25.41% for 7 last days</div>
+              <div className="text-4xl font-bold text-white mb-2">{loading ? "..." : data?.total_sessions ?? "-"}</div>
+              <div className="text-sm text-emerald-400 mb-6">{loading ? "Loading..." : `▲ +${data?.total_input_tokens ?? "-"} tokens`}</div>
 
               {/* Bar Chart */}
               <div className="h-48 flex items-end justify-between space-x-2">
-                {[40, 60, 80, 90, 70, 85, 95, 100].map((height, index) => (
-                  <div key={index} className="flex-1 bg-emerald-500 rounded-t" style={{ height: `${height}%` }}></div>
+                {usageChart.map((height, index) => (
+                  <div key={index} className="flex-1 bg-emerald-500 rounded-t" style={{ height: `${height / Math.max(...usageChart) * 100}%` }}></div>
                 ))}
               </div>
               <div className="flex justify-between text-xs text-slate-400 mt-2">
-                <span>Jan</span>
-                <span>Feb</span>
-                <span>Mar</span>
-                <span>Apr</span>
-                <span>May</span>
-                <span>Jun</span>
-                <span>Jul</span>
-                <span>Aug</span>
+                {usageLabels.map((label, idx) => (
+                  <span key={idx}>{label}</span>
+                ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* Popular Activity */}
+          {/* Top Questions */}
           <Card className="bg-[#1e293b] border-slate-700">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg text-white">Popular activity</CardTitle>
-              <Button variant="ghost" size="sm" className="text-emerald-400 text-xs">
+              <CardTitle className="text-lg text-white">Top Questions</CardTitle>
+              <Button variant="ghost" size="sm" className="text-emerald-400 text-xs" disabled>
                 See all
               </Button>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-slate-600 rounded flex items-center justify-center">
-                  <span className="text-xs">33</span>
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm text-white">Kuji Podcast 33: Live</div>
-                  <div className="text-xs text-slate-400">Guest: Nathan Sebhatu</div>
-                </div>
-                <div className="text-xs text-slate-400">1.09m</div>
-                <Badge className="bg-emerald-500 text-white text-xs">Live</Badge>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-slate-600 rounded flex items-center justify-center">
-                  <span className="text-xs">20</span>
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm text-white">Kuji Podcast 20: Live</div>
-                  <div className="text-xs text-slate-400">Guest: Nathan Sebhatu</div>
-                </div>
-                <div className="text-xs text-slate-400">1.14m</div>
-                <Badge className="bg-slate-600 text-slate-300 text-xs">Offline</Badge>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-slate-600 rounded flex items-center justify-center">
-                  <span className="text-xs">24</span>
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm text-white">Kuji Podcast 24: Live</div>
-                  <div className="text-xs text-slate-400">Guest: Nathan Sebhatu</div>
-                </div>
-                <div className="text-xs text-slate-400">1.04m</div>
-                <Badge className="bg-emerald-500 text-white text-xs">Live</Badge>
-              </div>
+            <CardContent className="space-y-2">
+              {loading ? (
+                <div className="text-slate-400">Loading...</div>
+              ) : (
+                data?.top_questions?.map((q, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span className="text-sm text-white">{q}</span>
+                  </div>
+                ))
+              )}
             </CardContent>
           </Card>
         </div>
