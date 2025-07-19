@@ -306,7 +306,7 @@ export default function InboxContent() {
               <CardContent className="space-y-4">
                 {doc.chunks.map((chunk: any, chunkIndex: number) => {
                   const chunkId = chunk.id ?? chunk.chunkId ?? `chunk${chunkIndex}`;
-                  const title = chunk.title ?? '';
+                  const title = chunk.titles ?? '';
                   const content = chunk.content ?? '';
                   const editState = editingChunks[doc.documentId]?.[chunkId];
                   const isEditing = !!editState;
