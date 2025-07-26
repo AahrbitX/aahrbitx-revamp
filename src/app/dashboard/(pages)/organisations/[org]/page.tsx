@@ -1,8 +1,10 @@
-import { getOrganisationData } from "@/actions/organizations/getOrganizationData";
-import { Button } from "@/components/ui/button";
-import { notFound } from "next/navigation";
 import React from "react";
+import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { getOrganisationData } from "@/actions/organizations/getOrganizationData";
 import { DeleteOrganization } from "./components/deleteOrganization";
+import { getProducts } from "@/actions/products/getProducts";
+import ProductCard from "./product-card";
 
 async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
   const routeParams = await params;
@@ -18,11 +20,8 @@ async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
   //   return <div>You do not have access to this page.</div>;
   // }
 
-  const handleDeleteOrganisation = async () => {
-    // Implement delete organization logic here
-  };
-
   const orgData = await getOrganisationData(currentOrg);
+  const products = await getProducts();
 
   if (!orgData) {
     notFound();
@@ -31,15 +30,39 @@ async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
   const currOrg = orgData[0];
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-semibold">
-        Your Organization: {currOrg.name}
-      </h1>
+    <section id="organisation-details" className="p-4 @container">
+      <div className="space-x-4 *:inline-block mb-3">
+        <h1 className="text-3xl font-semibold ">{currOrg.name}</h1>
+        <Badge className="border-2 border-amber-500 bg-amber-500/50 text-amber-100">
+          {/* {currOrg.plan} */}
+          Pro
+        </Badge>
+      </div>
+      <div className="my-4">
+        <h2 className="text-xl font-semibold mb-4">Applications</h2>
+        <div className="grid @lg:grid-cols-2 @2xl:grid-cols-3">
+          {products ? (
+            products.map((product) => (
+              <ProductCard key={product.id} props={product} />
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
+        </div>
+      </div>
+      <div>
+        <h2 className="text-xl font-semibold mb-2">
+          Your Organization Details
+        </h2>
+        <p className="text-muted-foreground">
+          Created at: {currOrg.created_at}
+        </p>
+      </div>
       {/* other content goes here  */}
       <div className="mt-4">
         <DeleteOrganization />
       </div>
-    </div>
+    </section>
   );
 }
 

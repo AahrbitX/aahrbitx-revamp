@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function OrganisationsPage() {
-  return (
-    <div>OrganisationsPage</div>
-  )
+  return <div>OrganisationsPage</div>;
 }
 
-export default OrganisationsPage
+export default OrganisationsPage;

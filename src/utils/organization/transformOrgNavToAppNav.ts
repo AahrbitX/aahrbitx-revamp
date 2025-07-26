@@ -6,7 +6,7 @@ import { Json } from "@/types/database.types";
  * Transforms organization navigation JSON into app-specific navigation structure.
  *
  * @param navData - The JSON navigation data fetched from Supabase.
- * @param subscribed_product - The product slug used to build URLs.
+ * @param application_id - The product slug used to build URLs.
  * @returns Array of navigation items formatted for the app.
  */
 
@@ -24,7 +24,8 @@ type NavBlock = {
 
 export const transformOrgNavToAppNav = (
   navData: Json,
-  subscribed_product: string
+  subscribed_product: string,
+  application_id: string
 ): AppUserNavType => {
   const safeData = navData as NavBlock;
 
@@ -34,7 +35,7 @@ export const transformOrgNavToAppNav = (
     isActive: safeData.isActive,
     items: safeData.items.map((item) => ({
       title: item.title,
-      url: `/dashboard/products/${subscribed_product}/${item.slug}`,
+      url: `/dashboard/applications/${application_id}/${subscribed_product}/${item.slug}`,
     })),
   };
 };

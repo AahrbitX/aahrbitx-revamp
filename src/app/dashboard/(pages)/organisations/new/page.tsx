@@ -41,7 +41,7 @@ function NewOrganisationCreationPage() {
     },
     onSubmit: async (values) => {
       try {
-        await createOrganization({
+        const { orgId } = await createOrganization({
           user_id: AppUser?.id ?? "",
           name: values.value.orgName,
           domain: values.value.domain,

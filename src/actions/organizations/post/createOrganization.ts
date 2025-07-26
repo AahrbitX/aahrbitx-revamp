@@ -37,6 +37,5 @@ export const createOrganization = async (data: {
     throw new Error(OrgUserMapErr.message);
   }
 
-  console.log("Organization created successfully:", OrgCreationData);
-  return OrgCreationData;
+  return { orgId: OrgCreationData.id };
 };

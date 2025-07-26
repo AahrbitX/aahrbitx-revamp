@@ -73,6 +73,7 @@ export function UserOrganizationWidget() {
     </div>
   );
 }
+
 export function UserApplicationWidget() {
   const { user } = useAuthOrg();
 
@@ -93,15 +94,21 @@ export function UserApplicationWidget() {
     fetchData();
   }, [user?.id]);
 
+  const validApplications = applications.filter(
+    (app: any) => app.application_id && app.application_name
+  );
+
   return (
     <div className="p-4 bg-muted rounded-lg shadow @2xl:col-span-2 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Your Applications</h2>
-        {/* <Button variant="outline" size="icon" className="h-8 w-8" asChild>
-          <Link>
-            <PlusIcon />
-          </Link>
-        </Button> */}
+        {validApplications.length > 0 && (
+          <Button variant="outline" size="icon" className="h-8 w-8" asChild>
+            <Link href="/dashboard/applications/new">
+              <PlusIcon />
+            </Link>
+          </Button>
+        )}
       </div>
       {loading ? (
         <div className="grow flex items-center justify-center">
@@ -109,28 +116,19 @@ export function UserApplicationWidget() {
         </div>
       ) : (
         <div className="grow flex items-start justify-start">
-          {applications.length === 0 ? (
+          {validApplications.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               You have not applied to any organizations.
             </p>
           ) : (
             <ul className="space-y-2 w-full">
-              {applications.map(
-                (app: UserOrganizationType & { source: string }) => {
-                  if (!app.application_id || !app.application_name)
-                    return (
-                      <p
-                        key={"no-application"}
-                        className="text-sm text-muted-foreground"
-                      >
-                        You have not applied to any organizations.
-                      </p>
-                    );
-                  return (
-                    <li
-                      key={app.application_id}
-                      className="flex items-center justify-between border border-gray-300 dark:border-neutral-700  px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer"
-                    >
+              {validApplications.map(
+                (app: UserOrganizationType & { source: string }) => (
+                  <Link
+                    key={app.application_id}
+                    href={`/dashboard/applications/${app.application_id}`}
+                  >
+                    <li className="flex items-center justify-between border border-gray-300 dark:border-neutral-700 px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer">
                       <span className="font-medium">
                         {app.application_name}
                       </span>
@@ -144,8 +142,8 @@ export function UserApplicationWidget() {
                         {app.source}
                       </Badge>
                     </li>
-                  );
-                }
+                  </Link>
+                )
               )}
             </ul>
           )}
