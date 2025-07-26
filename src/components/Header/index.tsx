@@ -7,7 +7,7 @@ import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import { InteractiveHoverButton } from "../ui/interactive-hover-button";
 import { ScrollProgress } from "../ui/scroll-progress";
-import { useAuth } from "@/providers/auth-provider";
+import { useAuthOrg } from "@/providers/auth-org-provider";
 import UserAvatar from "../Common/UserAvatar";
 
 const Header = () => {
@@ -32,7 +32,7 @@ const Header = () => {
 
   // submenu handler
   const [openIndex, setOpenIndex] = useState(-1);
-  const handleSubmenu = (index : number) => {
+  const handleSubmenu = (index: number) => {
     if (openIndex === index) {
       setOpenIndex(-1);
     } else {
@@ -42,7 +42,7 @@ const Header = () => {
 
   const usePathName = usePathname();
 
-  const {isAuth} = useAuth();
+  const { isAuth } = useAuthOrg();
 
   return (
     <>
@@ -164,59 +164,55 @@ const Header = () => {
                   </ul>
                   {/* Add Sign In and Sign Up Buttons */}
                   <div className="mt-4 border-t border-gray-300 pt-4 dark:border-gray-700 lg:hidden">
-                    {
-                      isAuth ? (
+                    {isAuth ? (
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center justify-start gap-3 w-full text-left text-base font-medium text-dark hover:opacity-70 dark:text-white "
+                      >
+                        <UserAvatar compact /> Dashboard
+                      </Link>
+                    ) : (
+                      <>
                         <Link
-                          href="/dashboard"
-                          className="flex items-center justify-start gap-3 w-full text-left text-base font-medium text-dark hover:opacity-70 dark:text-white "
+                          href="/signin"
+                          className="block w-full px-4 py-2 text-center text-base font-medium text-dark hover:opacity-70 dark:text-white"
                         >
-                        <UserAvatar compact/> Dashboard
+                          Sign In
                         </Link>
-                      ) : (
-                        <>
-                        <Link
-                      href="/signin"
-                      className="block w-full px-4 py-2 text-center text-base font-medium text-dark hover:opacity-70 dark:text-white"
-                    >
-                      Sign In
-                    </Link>
-                    <InteractiveHoverButton
-                      className="block w-full px-4 py-2 text-center mt-2"
-                      link="/signup"
-                      text="Sign Up"
-                    /></>
-                      )
-                    }
-                    
+                        <InteractiveHoverButton
+                          className="block w-full px-4 py-2 text-center mt-2"
+                          link="/signup"
+                          text="Sign Up"
+                        />
+                      </>
+                    )}
                   </div>
                 </nav>
               </div>
 
               <div className="flex items-center justify-end pr-16 lg:pr-0">
-                  {
-                    isAuth ? (
-                      <Link
-                        href="/dashboard"
-                        className="hidden items-center justify-start gap-3 px-7 py-3 text-base font-medium text-dark hover:opacity-80 dark:text-white md:flex"
-                      >
-                        <UserAvatar compact/> Dashboard
-                      </Link>
-                    ) : (
-                      <>
+                {isAuth ? (
+                  <Link
+                    href="/dashboard"
+                    className="hidden items-center justify-start gap-3 px-7 py-3 text-base font-medium text-dark hover:opacity-80 dark:text-white md:flex"
+                  >
+                    <UserAvatar compact /> Dashboard
+                  </Link>
+                ) : (
+                  <>
                     <Link
-                  href="/signin"
-                  className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-80 dark:text-white md:block"
-                >
-                  Sign In
-                </Link>
-                <InteractiveHoverButton
-                  className="hidden md:block"
-                  link="/signup"
-                  text="Sign Up"
-                />
-                      </>
-                    )
-                  }
+                      href="/signin"
+                      className="hidden px-7 py-3 text-base font-medium text-dark hover:opacity-80 dark:text-white md:block"
+                    >
+                      Sign In
+                    </Link>
+                    <InteractiveHoverButton
+                      className="hidden md:block"
+                      link="/signup"
+                      text="Sign Up"
+                    />
+                  </>
+                )}
                 <div>
                   <ThemeToggler />
                 </div>

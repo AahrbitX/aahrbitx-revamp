@@ -1,150 +1,87 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {
-  Globe,
-  LayoutGrid,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Users,
-} from "lucide-react"
+import * as React from "react";
+import { LucideProps, Settings2 } from "lucide-react";
 
-import { NavMain } from "./nav-main"
-import { NavUser } from "./nav-user"
-import { TeamSwitcher } from "./team-switcher"
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
+import { TeamSwitcher } from "./team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { defaultNavigations } from "@/lib/userNavigations";
+import { useAuthOrg } from "@/providers/auth-org-provider";
+import { getAppUserNav } from "@/utils/organization/getAppUserNav";
 
-const data = {
-  navMain: [
+export type AppUserNavType = {
+  title: string;
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+  isActive: boolean;
+  items: {
+    title: string;
+    url: string;
+  }[];
+};
+
+const defaultSettingsNav = {
+  title: "Settings",
+  icon: Settings2,
+  isActive: false,
+  items: [
     {
-      title: "Users",
-      icon: Users,
-      isActive: false,
-      items: [
-        {
-          title: "All Users",
-          url: "/dashboard/users",
-        },
-      ],
+      title: "General",
+      url: "#",
     },
     {
-      title: "Products",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "All Products",
-          url: "/dashboard/products",
-        },
-        {
-          title: "Templates",
-          url: "/dashboard/products/templates",
-        }
-      ],
+      title: "Application",
+      url: "#",
     },
     {
-      title:"Exora",
-      icon: Globe,
-      isActive: false,
-      items: [
-        {
-          title:"Overview",
-          url: "/dashboard/exora",
-        },
-        {
-          title:"Inbox",
-          url: "/dashboard/exora/inbox"
-        },
-        {
-          title:"Billing",
-          url: "/dashboard/exora/billing"
-        },
-        {
-          title:"Channels",
-          url: "/dashboard/exora/channels"
-        },
-        {
-          title:"Reports",
-          url: "/dashboard/exora/reports"
-        },
-      ]
+      title: "Billing",
+      url: "#",
     },
     {
-      title: "Sales",
-      icon: PieChart,
-      isActive: false,
-      items: [
-        {
-          title: "Revenue",
-          url: "/dashboard/revenue",
-        },
-        {
-          title: "Transactions",
-          url: "/dashboard/transactions",
-        },
-      ],
+      title: "Limits",
+      url: "#",
     },
-    {
-      title: "Services",
-      icon: LayoutGrid,
-      isActive: false,
-      items: [
-        {
-          title: "Products Service",
-          url: "/dashboard/services/products-service",
-        },
-        {
-          title: "Web Designs",
-          url: "/dashboard/services/web-designs",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      icon: Settings2,
-      isActive: false,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ]
-}
+  ],
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { currentSelector, userOrganizationData } = useAuthOrg();
+
+  let userNavigations: AppUserNavType[] = [];
+
+  const AppUserNavigations = getAppUserNav({
+    userOrganizationData,
+    currentSelector,
+  });
+
+  // Final User Navigations
+  userNavigations = [
+    ...AppUserNavigations,
+    ...defaultNavigations,
+    defaultSettingsNav,
+  ];
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={userNavigations} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

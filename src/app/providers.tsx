@@ -1,19 +1,27 @@
 "use client";
 
-import { ThemeProvider } from "next-themes";
-import { SupabaseAuthProvider } from "@/providers/auth-provider";
-import { SmoothScrollProvider } from "@/providers/smooth-scroll";
-import { Session } from "@supabase/supabase-js";
 import { AppUser } from "@/types/App.types";
+import { ThemeProvider } from "next-themes";
+import { SupabaseAuthOrgProvider } from "@/providers/auth-org-provider";
+import { SmoothScrollProvider } from "@/providers/smooth-scroll";
+import { UserOrganizationType } from "@/types/organizations/Organization";
 
-export function Providers({ children, session, appUser }: { children: React.ReactNode, session: Session | null, appUser: AppUser | null }) {
+export function Providers({
+  children,
+  appUser,
+  userOrgData,
+}: {
+  children: React.ReactNode;
+  appUser: AppUser | null;
+  userOrgData: UserOrganizationType[];
+}) {
   return (
-    <SupabaseAuthProvider session={session} appUser={appUser}>
-      <SmoothScrollProvider>
-        <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
+    <SmoothScrollProvider>
+      <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
+        <SupabaseAuthOrgProvider appUser={appUser} userOrgData={userOrgData}>
           {children}
-        </ThemeProvider>
-      </SmoothScrollProvider>
-    </SupabaseAuthProvider>
+        </SupabaseAuthOrgProvider>
+      </ThemeProvider>
+    </SmoothScrollProvider>
   );
 }

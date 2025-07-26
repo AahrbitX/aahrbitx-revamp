@@ -1,79 +1,176 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { useAuth } from '@/providers/auth-provider'
-import { createOrganisation } from '@/lib/api'
+import { z } from "zod";
+import React from "react";
+import { useAuthOrg } from "@/providers/auth-org-provider";
+import { createOrganization } from "@/actions/organizations/post/createOrganization";
+import { useForm } from "@tanstack/react-form";
+import { FieldError } from "@/utils/fieldErrors";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 function NewOrganisationCreationPage() {
-  const { user: AppUser } = useAuth()
-  const [orgName, setOrgName] = useState('')
-  const [domain, setDomain] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+  const { user: AppUser } = useAuthOrg();
 
-  const handleCreateOrg = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage('')
-    try {
-      const res = await await createOrganisation({
-        name: orgName,
-        domain,
-        plan: "Basic",
-        user_id: AppUser?.id ?? '',
-        email: AppUser?.email ?? '',
-        user_name: AppUser?.email ?? ''
-      });
-      
-      const data = await res.json()
-      if (data.status === 'success') {
-        setMessage('Organisation created successfully!')
-        setOrgName('')
-        setDomain('')
-      } else {
-        setMessage('Failed to create organisation.')
+  const formSchema = z.object({
+    orgName: z
+      .string()
+      .min(
+        5,
+        "Organisation name is required and should be at least 5 characters long"
+      ),
+    domain: z.string().min(1, "Domain Name Required"),
+    orgEmail: z.email("Invalid email address"),
+    orgAddress: z.string().optional(),
+    contact_no: z.string().optional(),
+    shouldReceiveProductUpdates: z.boolean().default(false),
+    shouldReceiveMarketingEmails: z.boolean().default(false),
+  });
+
+  const form = useForm({
+    defaultValues: {
+      orgName: "",
+      domain: "",
+      orgEmail: "",
+      orgAddress: "",
+      contact_no: "",
+      shouldReceiveProductUpdates: false,
+      shouldReceiveMarketingEmails: false,
+    },
+    onSubmit: async (values) => {
+      try {
+        await createOrganization({
+          user_id: AppUser?.id ?? "",
+          name: values.value.orgName,
+          domain: values.value.domain,
+          address: values.value.orgAddress,
+          email: AppUser?.email ?? "",
+        });
+
+        toast.success("Organisation created successfully!", {
+          description: "You can now add Applications to your organisation.",
+        });
+      } catch (error) {
+        toast.error("Network error. Please try again later.");
       }
-    } catch {
-      setMessage('Network error.')
-    }
-    setLoading(false)
-  }
+    },
+    validators: {
+      // @ts-ignore next line
+      onChange: formSchema,
+    },
+  });
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-slate-800 rounded-lg shadow">
-      <h2 className="text-xl font-bold text-white mb-4">Create New Organisation</h2>
-      <form onSubmit={handleCreateOrg} className="space-y-4">
+    <div className=" p-6 rounded-lg shadow max-w-lg">
+      <h2 className="text-xl font-bold text-white mb-4">
+        Create New Organisation
+      </h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="space-y-4"
+      >
         <div>
-          <label className="block text-slate-300 mb-1">Organisation Name</label>
-          <input
-            type="text"
-            value={orgName}
-            onChange={e => setOrgName(e.target.value)}
-            className="w-full p-2 rounded bg-slate-700 text-white"
-            required
-          />
+          <form.Field name="orgName">
+            {(field) => {
+              return (
+                <>
+                  <label
+                    htmlFor={field.name}
+                    className="block text-muted-foreground  mb-1"
+                  >
+                    Organisation Name
+                  </label>
+                  <Input
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldError field={field} />
+                </>
+              );
+            }}
+          </form.Field>
         </div>
         <div>
-          <label className="block text-slate-300 mb-1">Domain</label>
-          <input
-            type="text"
-            value={domain}
-            onChange={e => setDomain(e.target.value)}
-            className="w-full p-2 rounded bg-slate-700 text-white"
-            required
-          />
+          <form.Field name="domain">
+            {(field) => (
+              <>
+                <label
+                  className="block text-muted-foreground mb-1"
+                  htmlFor={field.name}
+                >
+                  Domain
+                </label>
+                <Input
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldError field={field} />
+              </>
+            )}
+          </form.Field>
         </div>
-        <button
-          type="submit"
-          className="w-full py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600"
-          disabled={loading}
+        <div>
+          <form.Field name="orgEmail">
+            {(field) => (
+              <>
+                <label
+                  htmlFor={field.name}
+                  className="block text-muted-foreground mb-1"
+                >
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldError field={field} />
+              </>
+            )}
+          </form.Field>
+        </div>
+        <div>
+          <form.Field name="orgAddress">
+            {(field) => (
+              <>
+                <label
+                  htmlFor={field.name}
+                  className="block text-muted-foreground mb-1"
+                >
+                  Address
+                </label>
+                <Textarea
+                  placeholder="Optional"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+                <FieldError field={field} />
+              </>
+            )}
+          </form.Field>
+        </div>
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
         >
-          {loading ? 'Creating...' : 'Create Organisation'}
-        </button>
-        {message && <div className="text-center text-slate-300 mt-2">{message}</div>}
+          {([canSubmit, isSubmitting]) => (
+            <Button className="float-end" type="submit" disabled={!canSubmit}>
+              {isSubmitting ? "Creating..." : "Create Organisation"}
+            </Button>
+          )}
+        </form.Subscribe>
       </form>
     </div>
-  )
+  );
 }
 
-export default NewOrganisationCreationPage
+export default NewOrganisationCreationPage;

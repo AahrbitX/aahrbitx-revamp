@@ -27,7 +27,7 @@ export const generateMetadata = async ({
 }: Props): Promise<Metadata> => {
   const { template: id } = await params;
   const template = templateData.find(
-    (template) => template.id === id && !template.comingSoon,
+    (template) => template.id === id && !template.comingSoon
   );
 
   if (!template) {
@@ -64,7 +64,7 @@ async function TemplatePage({ params }: Props) {
 
   return (
     <>
-      <div className="relative grid min-h-screen grid-cols-1 grid-rows-[auto_auto] gap-8 md:grid-cols-[2fr_1fr] md:grid-rows-1">
+      <div className="relative grid min-h-screen grid-cols-1 grid-rows-[auto_auto] gap-8 lg:grid-cols-[2fr_400px] lg:grid-rows-1">
         <div className="h-fit">
           <ImageSection images={flatImages} />
         </div>

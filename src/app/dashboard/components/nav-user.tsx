@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BadgeCheck,
@@ -9,13 +9,9 @@ import {
   LogOut,
   Shield,
   User,
-} from "lucide-react"
+} from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,42 +20,44 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { useAuth } from "@/providers/auth-provider"
+} from "@/components/ui/sidebar";
+import { useAuthOrg } from "@/providers/auth-org-provider";
 
 export function NavUser() {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
-  const {user:AppUser,logout} = useAuth();
+  const { user: AppUser, logout } = useAuthOrg();
 
   if (!AppUser) {
-    return null
+    return null;
   }
 
-  const userName =  AppUser.email || "User"
-  const userEmail = AppUser.email || "user@example.com"
-  const userInitials = userName.slice(0, 2).toUpperCase()
-  const userAvatar =  null
+  const userName = AppUser.email || "User";
+  const userEmail = AppUser.email || "user@example.com";
+  const userInitials = userName.slice(0, 2).toUpperCase();
+  const userAvatar = null;
 
   const user = {
     name: userName,
     email: userEmail,
-    avatar: userAvatar,
+    avatar: AppUser.app_role === "superuser" ? "/logo_pfp.png" : userAvatar,
     role: AppUser.app_role || "user",
-  }
+  };
 
   const RoleLogo = (() => {
-    switch(user.role) {
+    switch (user.role) {
       case "superuser":
-        return <Crown className="inline"  size={14} color="gold" fill="gold"/>;
+        return <Crown className="inline" size={14} color="gold" fill="gold" />;
       case "admin":
-        return <Shield className="inline" size={14} fill="crimson" color="crimson" />;
+        return (
+          <Shield className="inline" size={14} fill="crimson" color="crimson" />
+        );
       case "user":
         return <User className="inline" size={14} fill="green" color="green" />;
       default:
@@ -77,12 +75,18 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
-                <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
+                {user.avatar && (
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                )}
+                <AvatarFallback className="rounded-lg">
+                  {userInitials}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{RoleLogo} {user.role}</span>
+                <span className="truncate text-xs">
+                  {RoleLogo} {user.role}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -97,11 +101,15 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
-                  <AvatarFallback className="rounded-lg">{userInitials}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {userInitials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs flex items-center gap-1">{RoleLogo} {user.role}</span>
+                  <span className="truncate text-xs flex items-center gap-1">
+                    {RoleLogo} {user.role}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -129,5 +137,5 @@ export function NavUser() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

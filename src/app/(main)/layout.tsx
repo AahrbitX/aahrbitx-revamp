@@ -35,11 +35,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-      <div className={`bg-white dark:bg-black ${sora.className}`}>
-          <Header />
-          {children}
-          <Footer />
-          <ScrollToTop />
-      </div>
+    <div className={`bg-white dark:bg-black ${sora.className}`}>
+      <Header />
+      {children}
+      <Footer />
+      <ScrollToTop />
+    </div>
   );
 }

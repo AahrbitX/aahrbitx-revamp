@@ -8,7 +8,10 @@ export default function Billing() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Billing & Usage</h1>
         <div className="flex items-center space-x-4">
-          <Button variant="outline" className="border-slate-600 text-white bg-transparent">
+          <Button
+            variant="outline"
+            className="border-slate-600 text-white bg-transparent"
+          >
             Download Invoice
           </Button>
         </div>
@@ -16,28 +19,30 @@ export default function Billing() {
 
       {/* Top Stats */}
       <div className="grid grid-cols-4 gap-6 mb-8">
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-white mb-2">$12,547</div>
             <div className="text-sm text-slate-400">Total Revenue</div>
             <div className="text-xs text-emerald-400 mt-1">▲ +18.3%</div>
           </CardContent>
         </Card>
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-white mb-2">1,234</div>
             <div className="text-sm text-slate-400">Active Subscriptions</div>
             <div className="text-xs text-emerald-400 mt-1">▲ +6.7%</div>
           </CardContent>
         </Card>
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-white mb-2">98,243</div>
-            <div className="text-sm text-slate-400">API Requests (This Month)</div>
+            <div className="text-sm text-slate-400">
+              API Requests (This Month)
+            </div>
             <div className="text-xs text-emerald-400 mt-1">▲ +11.4%</div>
           </CardContent>
         </Card>
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-white mb-2">$128</div>
             <div className="text-sm text-slate-400">Current Bill</div>
@@ -49,14 +54,20 @@ export default function Billing() {
       {/* Graph & Top Users/Platforms */}
       <div className="grid grid-cols-2 gap-6">
         {/* Usage Over Time */}
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-lg text-white">Usage Over Time</CardTitle>
+            <CardTitle className="text-lg text-white">
+              Usage Over Time
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-48 flex items-end justify-between space-x-2">
               {[30, 45, 60, 75, 85, 90, 95, 100].map((height, index) => (
-                <div key={index} className="flex-1 bg-emerald-500 rounded-t" style={{ height: `${height}%` }}></div>
+                <div
+                  key={index}
+                  className="flex-1 bg-emerald-500 rounded-t"
+                  style={{ height: `${height}%` }}
+                ></div>
               ))}
             </div>
             <div className="flex justify-between text-xs text-slate-400 mt-2">
@@ -73,9 +84,11 @@ export default function Billing() {
         </Card>
 
         {/* Top Usage Sources */}
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-lg text-white">Top Usage Clients</CardTitle>
+            <CardTitle className="text-lg text-white">
+              Top Usage Clients
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {[
@@ -90,7 +103,10 @@ export default function Billing() {
                   <span className="text-slate-400">{item.usage}</span>
                 </div>
                 <div className="w-full bg-slate-700 rounded-full h-2">
-                  <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${item.percentage}%` }}></div>
+                  <div
+                    className="bg-emerald-500 h-2 rounded-full"
+                    style={{ width: `${item.percentage}%` }}
+                  ></div>
                 </div>
               </div>
             ))}

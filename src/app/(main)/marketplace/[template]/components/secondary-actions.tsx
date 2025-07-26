@@ -6,7 +6,7 @@ import React from "react";
 
 function SecondaryActions({ template }: { template: TemplateProps }) {
   return (
-    <div className="mb-6 flex flex-wrap items-center justify-start gap-4">
+    <div className="flex flex-wrap items-center justify-start gap-4">
       <SecondaryActionButton Icon={Globe} text="Website" link={template.link} />
       {/* todo : show license */}
       <SecondaryActionButton

@@ -11,25 +11,25 @@ import { verifyPayment } from "@/actions/payment/verify-payment";
 function ActionButtons({ template }: { template: TemplateProps }) {
   const primaryColor = template.colorSchema.find((s) => s.name === "primary");
   const secondaryColor = template.colorSchema.find(
-    (s) => s.name === "secondary",
+    (s) => s.name === "secondary"
   );
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   const [paymentInitiated, setPaymentInitiated] = useState(false);
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     script.onload = () => setIsScriptLoaded(true);
     document.body.appendChild(script);
-    
+
     return () => {
       document.body.removeChild(script);
     };
   }, []);
 
-  if(!primaryColor || !secondaryColor) {
+  if (!primaryColor || !secondaryColor) {
     return;
   }
 
@@ -37,7 +37,7 @@ function ActionButtons({ template }: { template: TemplateProps }) {
 
   const handlePayment = async () => {
     try {
-      setPaymentInitiated(true)
+      setPaymentInitiated(true);
 
       const paymentCreationResponse = await createPayment({
         email: prefillData.email,
@@ -46,7 +46,7 @@ function ActionButtons({ template }: { template: TemplateProps }) {
         product_name: template.title,
         product_image: "https://example.com/image.png",
         amount: String(template.priceBreakdown.selfService[0].price),
-      })
+      });
 
       const razorpay = new (window as any).Razorpay({
         ...options,
@@ -64,25 +64,30 @@ function ActionButtons({ template }: { template: TemplateProps }) {
               transaction_id: paymentCreationResponse.transaction_id,
               email: prefillData.email,
               phone: prefillData.phone,
-            })
+            });
           } catch (err) {
-            console.error("Payment verification failed:", err)
+            console.error("Payment verification failed:", err);
           }
         },
-      })
+      });
 
-      razorpay.open()
+      razorpay.open();
     } catch (err) {
-      console.error("Payment initiation failed:", err)
+      console.error("Payment initiation failed:", err);
     } finally {
-      setPaymentInitiated(false)
+      setPaymentInitiated(false);
     }
-  }
+  };
 
   return (
     <div className="flex w-full gap-4 transition-colors duration-300 *:flex-1">
       <button
-        onClick={isScriptLoaded ? handlePayment : () => alert("Payment system is loading...")}
+        onClick={
+          isScriptLoaded
+            ? handlePayment
+            : () => alert("Payment system is loading...")
+        }
+        style={{ backgroundColor: secondaryColor?.value }}
         className="flex items-center justify-center gap-2 rounded-xl py-2 hover:opacity-85"
       >
         <Contact
@@ -99,14 +104,23 @@ function ActionButtons({ template }: { template: TemplateProps }) {
         style={{ backgroundColor: primaryColor?.value }}
         className="flex items-center justify-center gap-2 rounded-xl py-2 hover:opacity-85 cursor-pointer"
       >
-        {paymentInitiated ? <span style={{ color: getContrastColor(primaryColor?.value) }}>Processing...</span>  :<> <ShoppingCart
-          className="size-5"
-          style={{ color: getContrastColor(primaryColor?.value) }}
-        />
-        <span style={{ color: getContrastColor(primaryColor?.value) }}>
-          Buy for {template.priceBreakdown.selfService[0].price}  &#x20b9;
-        </span></>}
-      </button> 
+        {paymentInitiated ? (
+          <span style={{ color: getContrastColor(primaryColor?.value) }}>
+            Processing...
+          </span>
+        ) : (
+          <>
+            {" "}
+            <ShoppingCart
+              className="size-5"
+              style={{ color: getContrastColor(primaryColor?.value) }}
+            />
+            <span style={{ color: getContrastColor(primaryColor?.value) }}>
+              {template.priceBreakdown.selfService[0].price} &#x20b9;
+            </span>
+          </>
+        )}
+      </button>
     </div>
   );
 }

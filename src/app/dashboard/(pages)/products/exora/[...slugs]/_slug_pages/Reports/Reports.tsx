@@ -9,18 +9,25 @@ export default function ReportsContent() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Reports</h1>
         <div className="flex items-center space-x-4">
-          <Button variant="outline" className="border-slate-600 text-white bg-transparent">
+          <Button
+            variant="outline"
+            className="border-slate-600 text-white bg-transparent"
+          >
             <Download className="w-4 h-4 mr-2" />
             Export Report
           </Button>
-          <Button className="bg-emerald-500 hover:bg-emerald-600">Generate Report</Button>
+          <Button className="bg-emerald-500 hover:bg-emerald-600">
+            Generate Report
+          </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-6 mb-8">
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-lg text-white">Performance Summary</CardTitle>
+            <CardTitle className="text-lg text-white">
+              Performance Summary
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -44,7 +51,7 @@ export default function ReportsContent() {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#1e293b] border-slate-700">
+        <Card>
           <CardHeader>
             <CardTitle className="text-lg text-white">Top Episodes</CardTitle>
           </CardHeader>
@@ -59,7 +66,9 @@ export default function ReportsContent() {
                 <div key={index} className="flex items-center justify-between">
                   <div>
                     <div className="text-sm text-white">{episode.title}</div>
-                    <div className="text-xs text-slate-400">{episode.plays} plays</div>
+                    <div className="text-xs text-slate-400">
+                      {episode.plays} plays
+                    </div>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Star className="w-3 h-3 text-yellow-500 fill-current" />
@@ -72,15 +81,23 @@ export default function ReportsContent() {
         </Card>
       </div>
 
-      <Card className="bg-[#1e293b] border-slate-700">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-lg text-white">Detailed Analytics</CardTitle>
+          <CardTitle className="text-lg text-white">
+            Detailed Analytics
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-64 flex items-end justify-between space-x-2">
-            {[65, 78, 82, 90, 75, 88, 95, 100, 85, 92, 87, 94].map((height, index) => (
-              <div key={index} className="flex-1 bg-emerald-500 rounded-t" style={{ height: `${height}%` }}></div>
-            ))}
+            {[65, 78, 82, 90, 75, 88, 95, 100, 85, 92, 87, 94].map(
+              (height, index) => (
+                <div
+                  key={index}
+                  className="flex-1 bg-emerald-500 rounded-t"
+                  style={{ height: `${height}%` }}
+                ></div>
+              )
+            )}
           </div>
           <div className="flex justify-between text-xs text-slate-400 mt-2">
             <span>Jan</span>

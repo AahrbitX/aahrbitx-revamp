@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
 
 function ProductsPage() {
   return (
-    <div>ProductsPage</div>
-  )
+    <>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0 @container">
+        <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min p-2"></div>
+      </div>
+    </>
+  );
 }
 
-export default ProductsPage
+export default ProductsPage;
