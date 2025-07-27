@@ -31,19 +31,19 @@ export const getAppUserNav = ({
       nav_sidebar_admin,
       user_role,
       application_id,
-      subscribed_product_id,
+      subscribed_product_name,
     } = org;
 
     const navToTransform =
       user_role === "admin"
         ? transformOrgNavToAppNav(
             nav_sidebar_admin,
-            subscribed_product_id!,
+            subscribed_product_name!,
             application_id!
           )
         : transformOrgNavToAppNav(
             nav_sidebar,
-            subscribed_product_id!,
+            subscribed_product_name!,
             application_id!
           );
 

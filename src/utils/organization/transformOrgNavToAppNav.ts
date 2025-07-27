@@ -35,7 +35,9 @@ export const transformOrgNavToAppNav = (
     isActive: safeData.isActive,
     items: safeData.items.map((item) => ({
       title: item.title,
-      url: `/dashboard/applications/${application_id}/${subscribed_product}/${item.slug}`,
+      url: `/dashboard/applications/${application_id}/${subscribed_product.toLowerCase()}/${
+        item.slug
+      }`,
     })),
   };
 };
