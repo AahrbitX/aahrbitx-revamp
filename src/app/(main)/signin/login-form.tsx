@@ -23,6 +23,7 @@ export function LoginForm({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setErrorMessage(null);
     setIsPending(true);
     const formData = new FormData(event.currentTarget);
 
