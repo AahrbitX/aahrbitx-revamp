@@ -14,7 +14,7 @@ function AppUsersDataTable({ appUsers }: { appUsers: AppUser[] }) {
   });
   return (
     <div className="mt-4">
-      <DataTable columns={columns} data={appUsers} table={table} />
+      <DataTable columns={columns} table={table} />
     </div>
   );
 }
