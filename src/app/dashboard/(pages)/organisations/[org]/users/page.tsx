@@ -1,8 +1,7 @@
-"use client";
-
 import React from "react";
 import OrgUsersTable from "./data-table/OrgUsersTable";
 import { getOrganisationUsers } from "@/actions/organizations/getOrganizationUsers";
+import { getOrganisationApps } from "@/actions/organizations/getOrganizationApps";
 
 async function OrgUsersPage({ params }: { params: Promise<{ org: string }> }) {
   const routeParams = await params;
@@ -18,14 +17,15 @@ async function OrgUsersPage({ params }: { params: Promise<{ org: string }> }) {
   //   return <div>You do not have access to this page.</div>;
   // }
 
-  const orgUsers = await getOrganisationUsers(currentOrg);
+  const orgAppUsers = await getOrganisationUsers(currentOrg);
+  const orgApplications = await getOrganisationApps(currentOrg);
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-semibold">
-        Your Organisation Users: {currentOrg}
-      </h1>
-      <div>{/* <OrgUsersTable data={orgUsers} /> */}</div>
+      <h1 className="text-xl font-semibold">Your Organisation Users</h1>
+      <div>
+        <OrgUsersTable data={orgAppUsers} applications={orgApplications} />
+      </div>
     </div>
   );
 }

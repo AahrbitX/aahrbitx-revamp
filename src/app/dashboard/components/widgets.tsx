@@ -125,11 +125,14 @@ export function UserApplicationWidget() {
             <ul className="space-y-2 w-full">
               {validApplications.map(
                 (app: UserOrganizationType & { source: string }) => (
-                  <Link
+                  <li
                     key={app.application_id}
-                    href={`/dashboard/applications/${app.application_id}`}
+                    className=" border border-gray-300 dark:border-neutral-700 px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer"
                   >
-                    <li className="flex items-center justify-between border border-gray-300 dark:border-neutral-700 px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer">
+                    <Link
+                      className="flex items-center justify-between"
+                      href={`/dashboard/applications/${app.application_id}`}
+                    >
                       <span className="font-medium">
                         {app.application_name}
                       </span>
@@ -142,8 +145,8 @@ export function UserApplicationWidget() {
                       >
                         {app.source}
                       </Badge>
-                    </li>
-                  </Link>
+                    </Link>
+                  </li>
                 )
               )}
             </ul>

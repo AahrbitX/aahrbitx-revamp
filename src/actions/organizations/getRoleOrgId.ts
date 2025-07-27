@@ -7,13 +7,13 @@ export const getUserDetails = async (
   appName: string
 ): Promise<{
   user_role: string;
-  organization_id: number;
+  org_id: number | string;
 }> => {
   const supabase = createDBClient();
 
   const { data, error } = await supabase
-    .from("organisation_user_view")
-    .select("user_role, organization_id")
+    .from("user_organizations")
+    .select("user_role, org_id")
     .eq("user_id", userId)
     .eq("application_name", appName)
     .single();
@@ -22,12 +22,12 @@ export const getUserDetails = async (
     console.error("Error fetching user details:", error);
     return {
       user_role: "guest",
-      organization_id: -1,
+      org_id: -1,
     };
   }
 
   return {
     user_role: data.user_role || "guest",
-    organization_id: data.organization_id || -1,
+    org_id: data.org_id || -1,
   };
 };

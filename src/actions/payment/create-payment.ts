@@ -7,8 +7,6 @@ const paymentBackendUrl = process.env.NEXT_PUBLIC_PAYMENT_BACKEND_URL;
 export const createPayment = async (
   req: CreatePaymentRequest
 ): Promise<CreatePaymentResponse> => {
-  console.log("Creating payment with request:", req);
-
   const response = await fetch(`${paymentBackendUrl}/create-payment/`, {
     method: "POST",
     headers: {
