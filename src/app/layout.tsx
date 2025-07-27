@@ -6,6 +6,8 @@ import getCurrUser from "@/actions/user/getCurrUser";
 import { getUserOrgData } from "@/actions/organizations/getUserOrgData";
 import { Toaster } from "@/components/ui/sonner";
 
+import Script from "next/script";
+
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export default async function RootLayout({
@@ -32,6 +34,10 @@ export default async function RootLayout({
           {children}
         </Providers>
         <Toaster />
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   );

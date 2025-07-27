@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteOrganization } from "@/actions/organizations/delete/deleteOrganization";
+import { deleteApplication } from "@/actions/organizations/delete/deleteApplication";
 import { Button } from "@/components/ui/button";
 import { useAuthOrg } from "@/providers/auth-org-provider";
 import { redirect, useParams } from "next/navigation";
@@ -18,19 +18,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export const DeleteOrganization = () => {
+export const DeleteApplication = () => {
   const { user } = useAuthOrg();
   const params = useParams();
   const { userOrganizationData, setUserOrganizationData } = useAuthOrg();
 
-  const org = params.org;
+  const app = params.app;
   const userId = user?.id;
 
-  if (!org) return;
-  const orgId = Array.isArray(org) ? org[0] : org;
+  if (!app) return;
+  const appId = Array.isArray(app) ? app[0] : app;
 
   const currUserRole = userOrganizationData.find(
-    (org) => org.org_id === orgId
+    (org) => org.application_id === appId
   )?.user_role;
 
   if (!currUserRole || currUserRole !== "superadmin") {
@@ -40,15 +40,15 @@ export const DeleteOrganization = () => {
   const handleDelete = async () => {
     if (!userId) return;
 
-    toast.promise(deleteOrganization(userId, orgId), {
-      loading: "Deleting organization...",
-      success: "Organization deleted successfully",
-      error: "Unable to delete organization",
+    toast.promise(deleteApplication({ userId, appId }), {
+      loading: "Deleting application...",
+      success: "Application deleted successfully",
+      error: "Unable to delete application",
     });
 
-    // removing the deleting organization from the state
+    // removing the deleting application from the state
     setUserOrganizationData(
-      userOrganizationData.filter((org) => org.org_id !== orgId)
+      userOrganizationData.filter((app) => app.application_id !== appId)
     );
 
     redirect("/dashboard");
@@ -57,14 +57,14 @@ export const DeleteOrganization = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete Organization</Button>
+        <Button variant="destructive">Delete Application</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your
-            Organisation and remove your data from our servers.
+            Application and remove your data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

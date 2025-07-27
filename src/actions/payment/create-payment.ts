@@ -1,25 +1,29 @@
-"use server"
+"use server";
 
-import { CreatePaymentRequest,CreatePaymentResponse } from "@/types/payment"
+import { CreatePaymentRequest, CreatePaymentResponse } from "@/types/payment";
 
 const paymentBackendUrl = process.env.NEXT_PUBLIC_PAYMENT_BACKEND_URL;
 
-export const createPayment = async (req: CreatePaymentRequest): Promise<CreatePaymentResponse> => {
-    const response = await fetch(`${paymentBackendUrl}/create-payment/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(req)
-    });
+export const createPayment = async (
+  req: CreatePaymentRequest
+): Promise<CreatePaymentResponse> => {
+  console.log("Creating payment with request:", req);
 
-    console.log("Payment creation response:", response);
+  const response = await fetch(`${paymentBackendUrl}/create-payment/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(req),
+  });
 
-    if (!response.ok) {
-        throw new Error("Failed to create payment");
-    }
+  //   console.log("Payment creation response:", response);
 
-    const responseBody = await response.json();
+  if (!response.ok) {
+    throw new Error("Failed to create payment");
+  }
 
-    return responseBody as CreatePaymentResponse;
-}
+  const responseBody = await response.json();
+
+  return responseBody as CreatePaymentResponse;
+};

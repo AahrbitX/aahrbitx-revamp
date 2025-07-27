@@ -63,9 +63,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     currentSelector,
   });
 
+  const UserRoleBasedNavigation: AppUserNavType[] = [];
+
   // Final User Navigations
   userNavigations = [
     ...AppUserNavigations,
+    ...UserRoleBasedNavigation,
     ...defaultNavigations,
     defaultSettingsNav,
   ];

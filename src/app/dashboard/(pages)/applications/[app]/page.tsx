@@ -1,7 +1,8 @@
-import { getApplicationData } from "@/actions/products/getApplicationData";
-import { Badge } from "@/components/ui/badge";
-import { notFound } from "next/navigation";
 import React from "react";
+import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { getApplicationData } from "@/actions/products/getApplicationData";
+import { DeleteApplication } from "./components/deleteApplication";
 
 async function AppDataPage({ params }: { params: Promise<{ app: string }> }) {
   const routeParams = await params;
@@ -23,12 +24,10 @@ async function AppDataPage({ params }: { params: Promise<{ app: string }> }) {
     notFound();
   }
 
-  const currApp = appData[0];
-
   return (
     <section id="organisation-details" className="p-4 @container">
       <div className="space-x-4 *:inline-block mb-3">
-        <h1 className="text-3xl font-semibold ">{currApp.application_name}</h1>
+        <h1 className="text-3xl font-semibold ">{appData.application_name}</h1>
         <Badge className="border-2 border-amber-500 bg-amber-500/50 text-amber-100">
           {/* {currOrg.plan} */}
           Pro
@@ -36,6 +35,10 @@ async function AppDataPage({ params }: { params: Promise<{ app: string }> }) {
       </div>
       <div className="my-4">
         <h2>Subscribed Product</h2>
+        <p>{appData.subscribed_product?.name}</p>
+      </div>
+      <div>
+        <DeleteApplication />
       </div>
     </section>
   );

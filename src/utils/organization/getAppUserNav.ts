@@ -3,6 +3,7 @@
 import { AppUserNavType } from "@/app/dashboard/components/app-sidebar";
 import { UserOrganizationType } from "@/types/organizations/Organization";
 import { transformOrgNavToAppNav } from "@/utils/organization/transformOrgNavToAppNav";
+import { Users } from "lucide-react";
 
 export const getAppUserNav = ({
   currentSelector,
@@ -30,24 +31,38 @@ export const getAppUserNav = ({
       nav_sidebar_admin,
       user_role,
       application_id,
-      subscribed_product,
+      subscribed_product_id,
     } = org;
 
     const navToTransform =
       user_role === "admin"
         ? transformOrgNavToAppNav(
             nav_sidebar_admin,
-            subscribed_product!,
+            subscribed_product_id!,
             application_id!
           )
         : transformOrgNavToAppNav(
             nav_sidebar,
-            subscribed_product!,
+            subscribed_product_id!,
             application_id!
           );
 
     return navToTransform;
   });
+
+  if (currentSelector.user_role === "superadmin") {
+    finalNav.push({
+      title: "Users",
+      icon: Users,
+      isActive: false,
+      items: [
+        {
+          title: "All Users",
+          url: `/dashboard/organisations/${currentSelector.org_id}/users`,
+        },
+      ],
+    });
+  }
 
   return finalNav;
 };

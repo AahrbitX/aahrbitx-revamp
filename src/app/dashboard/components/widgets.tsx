@@ -46,7 +46,7 @@ export function UserOrganizationWidget() {
           <Trefoil size="28" stroke="4" speed="3.5" color="grey" />
         </div>
       ) : (
-        <div className="grow flex items-start justify-start">
+        <div className="grow flex items-start justify-start gap-2">
           {organizations.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               You are not a member of any organization.
@@ -54,17 +54,17 @@ export function UserOrganizationWidget() {
           ) : (
             <ul className="space-y-2 w-full">
               {organizations.map((org: UserOrganizationType) => (
-                <Link
-                  href={`/dashboard/organisations/${org.org_id}`}
+                <li
                   key={org.org_id}
+                  className="border border-gray-300 dark:border-neutral-700 px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer"
                 >
-                  <li
-                    key={org.org_id}
-                    className="flex items-center justify-between border border-gray-300 dark:border-neutral-700  px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer"
+                  <Link
+                    href={`/dashboard/organisations/${org.org_id}`}
+                    className="block w-full font-medium"
                   >
-                    <span className="font-medium">{org.organization_name}</span>
-                  </li>
-                </Link>
+                    {org.organization_name}
+                  </Link>
+                </li>
               ))}
             </ul>
           )}
@@ -89,6 +89,7 @@ export function UserApplicationWidget() {
         ...internal_applications.map((app) => ({ ...app, source: "internal" })),
         ...external_applications.map((app) => ({ ...app, source: "external" })),
       ]);
+      console.log("user apps", internal_applications, external_applications);
       setLoading(false);
     };
     fetchData();

@@ -13,7 +13,16 @@ import React from "react";
 
 type ProductCardProps = Database["public"]["Tables"]["products"]["Row"];
 
+type ProductPriceType = {
+  name: string;
+  price: string;
+  price_type: string;
+  validity_months: string;
+};
+
 function ProductCard({ props }: { props: ProductCardProps }) {
+  // const priceData = props.price as ProductPriceType;
+
   return (
     <Card>
       <CardHeader>
@@ -25,9 +34,7 @@ function ProductCard({ props }: { props: ProductCardProps }) {
         </CardTitle>
         <p className="line-clamp-2">{props.description}</p>
       </CardHeader>
-      <CardContent>
-        <p>Price: ${props.price}</p>
-      </CardContent>
+      <CardContent>{/* <p>Price: ${props.price}</p> */}</CardContent>
       <CardFooter className=" space-x-2">
         <Button variant={"outline"} className="group">
           <Settings className="group-hover:animate-spin " />

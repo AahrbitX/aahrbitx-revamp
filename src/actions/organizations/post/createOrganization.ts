@@ -33,9 +33,16 @@ export const createOrganization = async (data: {
     application_id: null,
   });
 
+  const { data: userOrgData, error: userOrgErr } = await supabase
+    .from("user_organizations")
+    .select("*")
+    .eq("user_id", data.user_id)
+    .eq("org_id", OrgCreationData.id)
+    .single();
+
   if (OrgUserMapErr) {
     throw new Error(OrgUserMapErr.message);
   }
 
-  return { orgId: OrgCreationData.id };
+  return userOrgData;
 };

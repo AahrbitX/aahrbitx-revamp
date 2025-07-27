@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import OrgUsersTable from "./data-table/OrgUsersTable";
 import { getOrganisationUsers } from "@/actions/organizations/getOrganizationUsers";
@@ -23,9 +25,7 @@ async function OrgUsersPage({ params }: { params: Promise<{ org: string }> }) {
       <h1 className="text-xl font-semibold">
         Your Organisation Users: {currentOrg}
       </h1>
-      <div>
-        <OrgUsersTable data={orgUsers} />
-      </div>
+      <div>{/* <OrgUsersTable data={orgUsers} /> */}</div>
     </div>
   );
 }

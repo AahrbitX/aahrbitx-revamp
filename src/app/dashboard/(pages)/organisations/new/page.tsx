@@ -10,10 +10,17 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { redirect } from "next/navigation";
 
 function NewOrganisationCreationPage() {
-  const { user: AppUser } = useAuthOrg();
+  // get user and organization data
+  const {
+    user: AppUser,
+    userOrganizationData,
+    setUserOrganizationData,
+  } = useAuthOrg();
 
+  // create organization form schema
   const formSchema = z.object({
     orgName: z
       .string()
@@ -29,6 +36,7 @@ function NewOrganisationCreationPage() {
     shouldReceiveMarketingEmails: z.boolean().default(false),
   });
 
+  // initialize form
   const form = useForm({
     defaultValues: {
       orgName: "",
@@ -39,19 +47,24 @@ function NewOrganisationCreationPage() {
       shouldReceiveProductUpdates: false,
       shouldReceiveMarketingEmails: false,
     },
+    // form submission
     onSubmit: async (values) => {
       try {
-        const { orgId } = await createOrganization({
+        const orgUserMapData = await createOrganization({
           user_id: AppUser?.id ?? "",
           name: values.value.orgName,
           domain: values.value.domain,
           address: values.value.orgAddress,
           email: AppUser?.email ?? "",
         });
+        // update user organization data
+        setUserOrganizationData([...userOrganizationData, orgUserMapData]);
 
         toast.success("Organisation created successfully!", {
           description: "You can now add Applications to your organisation.",
         });
+
+        redirect("/dashboard");
       } catch (error) {
         toast.error("Network error. Please try again later.");
       }
