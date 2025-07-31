@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter, useSearchParams } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getProducts } from "@/actions/products/getProducts";
 import { useAuthOrg } from "@/providers/auth-org-provider";
@@ -24,14 +25,22 @@ import { createApplication } from "@/actions/organizations/post/createApplicatio
 import { createPayment } from "@/actions/payment/create-payment";
 import { paymentOptions, prefillData } from "@/lib/payment";
 import { verifyPayment } from "@/actions/payment/verify-payment";
+import { updateApplication } from "@/actions/organizations/post/updateApplication";
+import { getApplicationData } from "@/actions/products/getApplicationData";
 
-const formSchema = z.object({
+const baseSchema = {
   appName: z.string().min(5, "Application name must be at least 5 characters"),
+  appDescription: z.string().optional(),
+};
+
+const fullSchema = z.object({
+  ...baseSchema,
   orgId: z.string().min(1, "Select an organization"),
   subscribingProduct: z.string().min(1, "Select a product"),
   appPlan: z.string().min(1, "Select a plan"),
-  appDescription: z.string().optional(),
 });
+
+const updateSchema = z.object(baseSchema);
 
 function NewApplicationFormPage() {
   const {
@@ -44,27 +53,97 @@ function NewApplicationFormPage() {
     return <div>Please log in to create an application.</div>;
   }
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const updatingApplicationId = searchParams.get("appId") || "";
+
+  const isValid = userOrganizations.some(
+    (org) =>
+      org.application_id === updatingApplicationId &&
+      org.user_role === "superadmin"
+  );
+
+  if (!isValid) {
+    return <div>You do not have permission to update this application.</div>;
+  }
+
+  const [updatingApplication, setUpdatingApplication] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchApplicationData = async () => {
+      if (updatingApplicationId) {
+        const response = await getApplicationData(updatingApplicationId);
+        setUpdatingApplication(response);
+      }
+    };
+    fetchApplicationData();
+  }, [updatingApplicationId]);
+
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [productData, setProductData] = useState<any>(null);
   const [plans, setPlans] = useState<any[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && !(window as any).Razorpay) {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const schemaToUse = updatingApplicationId ? updateSchema : fullSchema;
+
   const form = useForm({
     defaultValues: {
-      appName: "",
-      orgId: "",
-      subscribingProduct: "",
-      appDescription: "",
-      appPlan: "",
+      appName: updatingApplication?.application_name || "",
+      orgId: updatingApplication?.org_id || "",
+      subscribingProduct: updatingApplication?.subscribed_product_id || "",
+      appDescription: updatingApplication?.description || "",
+      appPlan: updatingApplication?.plan || "",
     },
     validators: {
       // @ts-ignore - schema validation
-      onChange: formSchema,
+      onChange: schemaToUse,
     },
     onSubmit: async ({ value }) => {
+      const payload = {
+        user: AppUser,
+        appName: value.appName,
+        orgId: value.orgId,
+        subscribedProduct: value.subscribingProduct,
+        appDescription: value.appDescription,
+        appPlan: value.appPlan,
+      };
+
       try {
-        // Step 1: Create payment
+        if (updatingApplicationId) {
+          // Skip payment, directly update
+          const updatedData = await updateApplication(
+            updatingApplicationId,
+            payload
+          );
+
+          setUserOrganizationData((prev) =>
+            prev.map((org) =>
+              org.application_id === updatedData.application_id
+                ? { ...org, ...updatedData }
+                : org
+            )
+          );
+
+          toast.success("Application updated successfully!", {
+            description: "You can now manage your application.",
+          });
+
+          router.push(`/dashboard/applications/${updatingApplicationId}`);
+          return;
+        }
+
+        // Proceed with payment only for creation
         const paymentCreationResponse = await createPayment({
           email: prefillData.email,
           phone: prefillData.phone,
@@ -74,27 +153,22 @@ function NewApplicationFormPage() {
           amount: String(selectedPlan.price),
         });
 
-        console.log("Payment creation response:", paymentCreationResponse);
-
         if (!paymentCreationResponse?.razorpay_order_id) {
           throw new Error("Invalid Razorpay order ID");
         }
 
-        // Step 2: Ensure Razorpay is loaded
         if (typeof window === "undefined" || !(window as any).Razorpay) {
           throw new Error("Razorpay SDK not loaded");
         }
 
         const options = {
           ...paymentOptions,
-          amount: Number(selectedPlan.price) * 100, // Razorpay expects paise
+          amount: Number(selectedPlan.price) * 100,
           name: productData.name,
           description: `${productData.name} - ₹${selectedPlan.price}`,
           theme: { color: "black" },
           order_id: paymentCreationResponse.razorpay_order_id,
           handler: async (res: any) => {
-            console.log("Razorpay handler triggered with response:", res);
-
             try {
               await verifyPayment({
                 razorpay_order_id: res.razorpay_order_id,
@@ -105,20 +179,16 @@ function NewApplicationFormPage() {
                 phone: prefillData.phone,
               });
 
-              const orgViewRes = await createApplication({
-                user: AppUser,
-                appName: value.appName,
-                orgId: value.orgId,
-                subscribedProduct: value.subscribingProduct,
-                appDescription: value.appDescription,
-                appPlan: value.appPlan,
-              });
-
+              const orgViewRes = await createApplication(payload);
               setUserOrganizationData((prev) => [...prev, orgViewRes]);
 
               toast.success("Application created successfully!", {
                 description: "You can now manage your application.",
               });
+
+              router.push(
+                `/dashboard/applications/${orgViewRes.application_id}`
+              );
             } catch (err) {
               console.error(
                 "Error verifying payment or creating application:",
@@ -128,8 +198,6 @@ function NewApplicationFormPage() {
             }
           },
         };
-
-        console.log("Razorpay options prepared:", options);
 
         const razorpay = new (window as any).Razorpay(options);
         razorpay.open();
@@ -172,7 +240,9 @@ function NewApplicationFormPage() {
   return (
     <div className="p-6 rounded-lg shadow max-w-lg">
       <h2 className="text-xl font-bold text-white mb-4">
-        Create New Application
+        {updatingApplicationId
+          ? "Update Application"
+          : "Create New Application"}
       </h2>
       <form
         onSubmit={(e) => {
@@ -213,6 +283,7 @@ function NewApplicationFormPage() {
                   Organization
                 </Label>
                 <Select
+                  disabled={isValid}
                   value={field.state.value}
                   onValueChange={(val) => field.handleChange(val)}
                 >
@@ -235,37 +306,42 @@ function NewApplicationFormPage() {
           </form.Field>
 
           <form.Field name="subscribingProduct">
-            {(field) => (
-              <div>
-                <Label
-                  htmlFor={field.name}
-                  className="text-muted-foreground mb-1 block underline"
-                >
-                  <Link href="/products">Products</Link>
-                </Label>
-                <Select
-                  disabled={loading}
-                  value={field.state.value}
-                  onValueChange={(val) => {
-                    field.handleChange(val);
-                    const selected = products.find((p) => p.id === val);
-                    if (selected) handleProductSelect(selected);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Product" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {products.map((product) => (
-                      <SelectItem key={product.id} value={product.id}>
-                        {product.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FieldError field={field} />
-              </div>
-            )}
+            {(field) => {
+              if (isValid) {
+                return;
+              }
+              return (
+                <div>
+                  <Label
+                    htmlFor={field.name}
+                    className="text-muted-foreground mb-1 block underline"
+                  >
+                    <Link href="/products">Products</Link>
+                  </Label>
+                  <Select
+                    disabled={loading}
+                    value={field.state.value}
+                    onValueChange={(val) => {
+                      field.handleChange(val);
+                      const selected = products.find((p) => p.id === val);
+                      if (selected) handleProductSelect(selected);
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products.map((product) => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FieldError field={field} />
+                </div>
+              );
+            }}
           </form.Field>
         </div>
 
@@ -338,10 +414,18 @@ function NewApplicationFormPage() {
               className="float-end"
               type="submit"
               disabled={
-                !canSubmit || !plans.length || !productData || !selectedPlan
+                !canSubmit ||
+                (!updatingApplicationId &&
+                  (!plans.length || !productData || !selectedPlan))
               }
             >
-              {isSubmitting ? "Creating..." : "Create Application"}
+              {isSubmitting
+                ? updatingApplicationId
+                  ? "Updating..."
+                  : "Creating..."
+                : updatingApplicationId
+                ? "Update Application"
+                : "Create Application"}
             </Button>
           )}
         </form.Subscribe>

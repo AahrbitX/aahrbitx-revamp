@@ -6,9 +6,8 @@ import "ldrs/react/Trefoil.css";
 
 import React, { useEffect, useState } from "react";
 import { Trefoil } from "ldrs/react";
-import { Spiral } from "ldrs/react";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { Building2, Plus, PlusIcon } from "lucide-react";
 import { getWidgetData } from "@/actions/organizations/widgetsData";
 import { useAuthOrg } from "@/providers/auth-org-provider";
 import { UserOrganizationType } from "@/types/organizations/Organization";
@@ -56,13 +55,21 @@ export function UserOrganizationWidget() {
               {organizations.map((org: UserOrganizationType) => (
                 <li
                   key={org.org_id}
-                  className="border border-gray-300 dark:border-neutral-700 px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer"
+                  className="border border-gray-300 dark:border-neutral-700 px-3 py-2 rounded-xl hover:bg-white dark:hover:bg-neutral-700/70 transition-colors duration-200 cursor-pointer"
                 >
                   <Link
                     href={`/dashboard/organisations/${org.org_id}`}
-                    className="block w-full font-medium"
+                    className="w-full font-medium flex items-start gap-4"
                   >
-                    {org.organization_name}
+                    <div className="p-4 bg-violet-500/50 text-violet-200 rounded-lg">
+                      <Building2 size={24} />
+                    </div>
+                    <div>
+                      <p className="text-lg">{org.organization_name}</p>
+                      <em className="text-sm text-muted-foreground">
+                        An organization
+                      </em>
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -103,7 +110,7 @@ export function UserApplicationWidget() {
     <div className="p-4 bg-muted rounded-lg shadow @2xl:col-span-2 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Your Applications</h2>
-        {validApplications.length > 0 && (
+        {applications.length > 0 && (
           <Button variant="outline" size="icon" className="h-8 w-8" asChild>
             <Link href="/dashboard/applications/new">
               <PlusIcon />
@@ -118,9 +125,18 @@ export function UserApplicationWidget() {
       ) : (
         <div className="grow flex items-start justify-start">
           {validApplications.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              You have not applied to any organizations.
-            </p>
+            <div className="w-full h-full flex items-center justify-center flex-col gap-4">
+              <Button
+                variant={"outline"}
+                className="size-10 border-dashed border-2"
+                asChild
+              >
+                <Link href="/dashboard/applications/new">
+                  <PlusIcon />
+                </Link>
+              </Button>
+              <p>Start by creating an application</p>
+            </div>
           ) : (
             <ul className="space-y-2 w-full">
               {validApplications.map(
@@ -165,7 +181,8 @@ export function UserNotificationWidget() {
         <h2 className="text-lg font-semibold">Your Notifications</h2>
       </div>
       <div className="grow flex items-center justify-center">
-        <Spiral size="40" speed="0.9" color="grey" />
+        {/* <Spiral size="40" speed="0.9" color="grey" /> */}
+        <p>No Notifications</p>
       </div>
     </div>
   );

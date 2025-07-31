@@ -59,26 +59,46 @@ function OrgUsersTable({
 
   return (
     <div className="mt-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant={"outline"}>
-              <Filter />
-              Filter By App
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {applications.map((app) => (
-              <DropdownMenuItem
-                key={app.id}
-                onClick={() => handleAppFilter(app.application_name)}
-              >
-                {app.application_name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Input placeholder="Search users..." className="max-w-sm" />
+      <div className="flex flex-col md:flex-row items-start justify-between mb-4">
+        <div className="flex flex-row items-center gap-4 mb-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"outline"}>
+                <Filter />
+                Filter By App
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              {applications.map((app) => (
+                <DropdownMenuItem
+                  key={app.id}
+                  onClick={() => handleAppFilter(app.application_name)}
+                >
+                  {app.application_name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <div>
+            <span className="text-sm text-muted-foreground">
+              Filtered by:{" "}
+              {columnFilters
+                .filter((f) => f.id === "user_application")
+                .map((f) => f.value)
+                .join(", ")}
+            </span>
+          </div>
+        </div>
+        <Input
+          placeholder="Search users by email..."
+          className="max-w-sm"
+          onChange={(e) => {
+            table.setColumnFilters((prev) => [
+              ...prev.filter((f) => f.id !== "user_email"),
+              { id: "user_email", value: e.target.value },
+            ]);
+          }}
+        />
       </div>
       <DataTable columns={columns} table={table} />
     </div>

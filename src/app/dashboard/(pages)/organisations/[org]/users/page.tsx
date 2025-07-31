@@ -2,6 +2,9 @@ import React from "react";
 import OrgUsersTable from "./data-table/OrgUsersTable";
 import { getOrganisationUsers } from "@/actions/organizations/getOrganizationUsers";
 import { getOrganisationApps } from "@/actions/organizations/getOrganizationApps";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 async function OrgUsersPage({ params }: { params: Promise<{ org: string }> }) {
   const routeParams = await params;
@@ -22,7 +25,16 @@ async function OrgUsersPage({ params }: { params: Promise<{ org: string }> }) {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-semibold">Your Organisation Users</h1>
+      <div className="flex flex-col md:flex-row gap-y-4 md:items-center justify-between items-start mb-4">
+        <h1 className="text-xl font-semibold">Your Organisation Users</h1>
+        <div>
+          <Button variant={"secondary"} asChild>
+            <Link href={`/dashboard/organisations/${currentOrg}/invite`}>
+              <PlusCircle /> Invite User
+            </Link>
+          </Button>
+        </div>
+      </div>
       <div>
         <OrgUsersTable data={orgAppUsers} applications={orgApplications} />
       </div>

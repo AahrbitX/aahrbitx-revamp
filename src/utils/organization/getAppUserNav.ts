@@ -60,6 +60,10 @@ export const getAppUserNav = ({
           title: "All Users",
           url: `/dashboard/organisations/${currentSelector.org_id}/users`,
         },
+        {
+          title: "Invite User",
+          url: `/dashboard/organisations/${currentSelector.org_id}/invite`,
+        },
       ],
     });
   }

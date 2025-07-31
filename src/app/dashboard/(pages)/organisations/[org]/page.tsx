@@ -5,6 +5,8 @@ import { getOrganisationData } from "@/actions/organizations/getOrganizationData
 import { DeleteOrganization } from "./components/deleteOrganization";
 import { getProducts } from "@/actions/products/getProducts";
 import ProductCard from "./product-card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
   const routeParams = await params;
@@ -37,6 +39,13 @@ async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
           {/* {currOrg.plan} */}
           Pro
         </Badge>
+      </div>
+      <div>
+        <Button variant={"secondary"} asChild>
+          <Link href={`/dashboard/organisations/new?orgId=${currOrg.id}`}>
+            Edit Organization
+          </Link>
+        </Button>
       </div>
       <div className="my-4">
         <h2 className="text-xl font-semibold mb-4">Applications</h2>

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { getApplicationData } from "@/actions/products/getApplicationData";
 import { DeleteApplication } from "./components/deleteApplication";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 async function AppDataPage({ params }: { params: Promise<{ app: string }> }) {
   const routeParams = await params;
@@ -32,6 +34,13 @@ async function AppDataPage({ params }: { params: Promise<{ app: string }> }) {
           {/* {currOrg.plan} */}
           Pro
         </Badge>
+      </div>
+      <div>
+        <Button variant="secondary" asChild>
+          <Link href={`/dashboard/applications/new?appId=${appData.id}`}>
+            Update Application
+          </Link>
+        </Button>
       </div>
       <div className="my-4">
         <h2>Subscribed Product</h2>
