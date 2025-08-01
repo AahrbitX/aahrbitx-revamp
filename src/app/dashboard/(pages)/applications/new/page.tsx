@@ -56,7 +56,7 @@ function NewApplicationFormPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const updatingApplicationId = searchParams.get("appId") || "";
+  const updatingApplicationId = searchParams.get("appId") || null;
 
   const isValid = userOrganizations.some(
     (org) =>
@@ -64,7 +64,7 @@ function NewApplicationFormPage() {
       org.user_role === "superadmin"
   );
 
-  if (!isValid) {
+  if (!isValid && !updatingApplicationId && userOrganizations.length > 0) {
     return <div>You do not have permission to update this application.</div>;
   }
 
