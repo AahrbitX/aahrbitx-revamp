@@ -2,14 +2,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Globe, Settings, ExternalLink, Plus } from "lucide-react";
+import {
+  IconBrandApplePodcast,
+  IconBrandGooglePodcasts,
+  IconBrandSpotify,
+  IconBrandYoutube,
+} from "@tabler/icons-react";
 
 export default function ChannelsContent() {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Distribution Channels</h1>
-        <Button className="bg-emerald-500 hover:bg-emerald-600">
-          <Plus className="w-4 h-4 mr-2" />
+        <Button className="">
+          <Plus />
           Add Channel
         </Button>
       </div>
@@ -22,6 +28,7 @@ export default function ChannelsContent() {
             subscribers: "5,234",
             lastSync: "2 hours ago",
             color: "bg-green-500",
+            Icon: IconBrandSpotify,
           },
           {
             name: "Apple Podcasts",
@@ -29,6 +36,7 @@ export default function ChannelsContent() {
             subscribers: "3,891",
             lastSync: "1 hour ago",
             color: "bg-gray-500",
+            Icon: IconBrandApplePodcast,
           },
           {
             name: "Google Podcasts",
@@ -36,6 +44,7 @@ export default function ChannelsContent() {
             subscribers: "2,156",
             lastSync: "3 hours ago",
             color: "bg-blue-500",
+            Icon: IconBrandGooglePodcasts,
           },
           {
             name: "YouTube",
@@ -43,6 +52,7 @@ export default function ChannelsContent() {
             subscribers: "1,266",
             lastSync: "30 minutes ago",
             color: "bg-red-500",
+            Icon: IconBrandYoutube,
           },
           {
             name: "Stitcher",
@@ -50,6 +60,7 @@ export default function ChannelsContent() {
             subscribers: "892",
             lastSync: "2 days ago",
             color: "bg-orange-500",
+            Icon: Globe,
           },
           {
             name: "Overcast",
@@ -57,16 +68,17 @@ export default function ChannelsContent() {
             subscribers: "654",
             lastSync: "1 hour ago",
             color: "bg-purple-500",
+            Icon: Globe,
           },
         ].map((channel, index) => (
           <Card key={index}>
-            <CardContent className="p-6">
+            <CardContent className="px-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-4">
                   <div
                     className={`w-12 h-12 ${channel.color} rounded-lg flex items-center justify-center`}
                   >
-                    <Globe className="w-6 h-6 text-white" />
+                    <channel.Icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h3 className="font-medium text-white">{channel.name}</h3>

@@ -13,6 +13,7 @@ import {
   uploadFile,
 } from "@/lib/api";
 import { useAuthOrg } from "@/providers/auth-org-provider"; // Add this import
+import { BookDashed } from "lucide-react";
 
 // interface InboxContentProps {
 //   knowledgeBase: any[];
@@ -296,16 +297,9 @@ export default function InboxContent() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Knowledge Base</h1>
         <div className="flex items-center space-x-4">
-          <Input
-            placeholder="Search messages..."
-            className="bg-[#1e293b] border-slate-600 text-white w-64"
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAddDocModal(true)}
-          >
-            Add Document
+          <Input placeholder="Search messages..." className=" w-64" />
+          <Button variant="secondary" onClick={() => setAddDocModal(true)}>
+            <BookDashed /> Add Document
           </Button>
         </div>
       </div>

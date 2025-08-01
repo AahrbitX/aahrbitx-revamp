@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, RefreshCw } from "lucide-react";
 import { getOrgUsage } from "@/lib/api";
 import { useAuthOrg } from "@/providers/auth-org-provider";
+import { RadialChartComponent } from "@/app/dashboard/components/charts/radial-chart";
+import { BarChartComponent } from "@/app/dashboard/components/charts/bar-chart";
 
 interface OrgUsage {
   total_sessions: number;
@@ -145,32 +147,7 @@ export default function Overview() {
           {/* Large Number Display */}
           <Card className="bg-card ">
             <CardContent className="p-6">
-              <div className="text-4xl font-bold text-white mb-2">
-                {loading ? "..." : data?.total_sessions ?? "-"}
-              </div>
-              <div className="text-sm text-emerald-400 mb-6">
-                {loading
-                  ? "Loading..."
-                  : `▲ +${data?.total_input_tokens ?? "-"} tokens`}
-              </div>
-
-              {/* Bar Chart */}
-              <div className="h-48 flex items-end justify-between space-x-2">
-                {usageChart.map((height, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 bg-emerald-500 rounded-t"
-                    style={{
-                      height: `${(height / Math.max(...usageChart)) * 100}%`,
-                    }}
-                  ></div>
-                ))}
-              </div>
-              <div className="flex justify-between text-xs text-slate-400 mt-2">
-                {usageLabels.map((label, idx) => (
-                  <span key={idx}>{label}</span>
-                ))}
-              </div>
+              <BarChartComponent />
             </CardContent>
           </Card>
 
@@ -206,42 +183,18 @@ export default function Overview() {
         {/* Right Column */}
         <div className="space-y-4 w-full">
           {/* Audience Satisfaction */}
-          <Card className="bg-card ">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-sm text-slate-400">
                 Audience satisfaction
               </CardTitle>
               <MoreHorizontal className="w-4 h-4 text-slate-400" />
             </CardHeader>
-            <CardContent className="flex items-center justify-center">
-              <div className="relative w-32 h-32">
-                <svg
-                  className="w-32 h-32 transform -rotate-90"
-                  viewBox="0 0 36 36"
-                >
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke="#374151"
-                    strokeWidth="2"
-                  />
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth="2"
-                    strokeDasharray="76.7, 100"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-white">76.7%</div>
-                  </div>
-                </div>
-              </div>
+            <CardContent className="flex-1">
+              <RadialChartComponent />
             </CardContent>
             <CardFooter className="px-6 pb-6 justify-center">
-              <div className="text-xs text-slate-400 text-center">
+              <div className="text-sm text-slate-400 text-center">
                 Based on likes / dislikes · 100%
               </div>
             </CardFooter>

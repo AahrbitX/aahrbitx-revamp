@@ -68,6 +68,7 @@ export const columns: ColumnDef<OrgUserWithAppUser>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
               <Button
+                disabled={row.original.user_role === "superadmin"}
                 variant="ghost"
                 className="w-full justify-start"
                 onClick={() =>

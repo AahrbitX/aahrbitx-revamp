@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Star, MoreHorizontal } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Download, Star } from "lucide-react";
+import { InteractiveBarChart } from "@/app/dashboard/components/charts/interactive-bar-chart";
+import { IconSparkles } from "@tabler/icons-react";
 
 export default function ReportsContent() {
   return (
@@ -17,7 +18,7 @@ export default function ReportsContent() {
             Export Report
           </Button>
           <Button className="bg-emerald-500 hover:bg-emerald-600">
-            Generate Report
+            <IconSparkles fill="black" /> Generate Report
           </Button>
         </div>
       </div>
@@ -81,40 +82,7 @@ export default function ReportsContent() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg text-white">
-            Detailed Analytics
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 flex items-end justify-between space-x-2">
-            {[65, 78, 82, 90, 75, 88, 95, 100, 85, 92, 87, 94].map(
-              (height, index) => (
-                <div
-                  key={index}
-                  className="flex-1 bg-emerald-500 rounded-t"
-                  style={{ height: `${height}%` }}
-                ></div>
-              )
-            )}
-          </div>
-          <div className="flex justify-between text-xs text-slate-400 mt-2">
-            <span>Jan</span>
-            <span>Feb</span>
-            <span>Mar</span>
-            <span>Apr</span>
-            <span>May</span>
-            <span>Jun</span>
-            <span>Jul</span>
-            <span>Aug</span>
-            <span>Sep</span>
-            <span>Oct</span>
-            <span>Nov</span>
-            <span>Dec</span>
-          </div>
-        </CardContent>
-      </Card>
+      <InteractiveBarChart />
     </div>
   );
 }
