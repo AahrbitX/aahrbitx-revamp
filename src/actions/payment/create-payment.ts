@@ -18,6 +18,8 @@ export const createPayment = async (
   //   console.log("Payment creation response:", response);
 
   if (!response.ok) {
+    const errorBody = await response.json();
+    console.log("Payment creation error:", errorBody);
     throw new Error("Failed to create payment");
   }
 

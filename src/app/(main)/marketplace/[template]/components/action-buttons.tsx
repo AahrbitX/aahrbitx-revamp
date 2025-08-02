@@ -7,12 +7,17 @@ import { Contact, ShoppingCart } from "lucide-react";
 import { paymentOptions, prefillData } from "@/lib/payment";
 import { createPayment } from "@/actions/payment/create-payment";
 import { verifyPayment } from "@/actions/payment/verify-payment";
+import { useAuthOrg } from "@/providers/auth-org-provider";
+import { toast } from "sonner";
 
 function ActionButtons({ template }: { template: TemplateProps }) {
   const primaryColor = template.colorSchema.find((s) => s.name === "primary");
   const secondaryColor = template.colorSchema.find(
     (s) => s.name === "secondary"
   );
+
+  const { user } = useAuthOrg();
+
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   const [paymentInitiated, setPaymentInitiated] = useState(false);
@@ -37,14 +42,17 @@ function ActionButtons({ template }: { template: TemplateProps }) {
 
   const handlePayment = async () => {
     try {
+      if (!user) {
+        toast.error("Please create an account to proceed with payment.");
+        return;
+      }
+
       setPaymentInitiated(true);
 
       const paymentCreationResponse = await createPayment({
+        user_id: user?.id!,
         email: prefillData.email,
-        phone: prefillData.phone,
         product_code: template.id,
-        product_name: template.title,
-        product_image: "https://example.com/image.png",
         amount: String(template.priceBreakdown.selfService[0].price),
       });
 
@@ -63,7 +71,7 @@ function ActionButtons({ template }: { template: TemplateProps }) {
               razorpay_signature: res.razorpay_signature,
               transaction_id: paymentCreationResponse.transaction_id,
               email: prefillData.email,
-              phone: prefillData.phone,
+              user_id: user?.id!,
             });
           } catch (err) {
             console.error("Payment verification failed:", err);
@@ -73,6 +81,7 @@ function ActionButtons({ template }: { template: TemplateProps }) {
 
       razorpay.open();
     } catch (err) {
+      toast.error("Payment initiation failed. Please try again.");
       console.error("Payment initiation failed:", err);
     } finally {
       setPaymentInitiated(false);

@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import { useAuthOrg } from "@/providers/auth-org-provider"; // Add this import
 import { BookDashed } from "lucide-react";
+import { toast } from "sonner";
 
 // interface InboxContentProps {
 //   knowledgeBase: any[];
@@ -24,15 +25,20 @@ import { BookDashed } from "lucide-react";
 export default function InboxContent() {
   // Per-chunk edit state
 
+  const { currentSelector } = useAuthOrg();
   const [knowledgeBase, setKnowledgeBase] = useState<any[]>([]);
   const [loadingKB, setLoadingKB] = useState(false);
-  const clientId = "5182fe22-21a1-410a-93e6-e0d029101e52";
+  const clientId = currentSelector?.org_id;
+
+  if (!clientId) {
+    return <div className="text-red-500">No organization selected</div>;
+  }
 
   useEffect(() => {
     async function fetchKB() {
       setLoadingKB(true);
       try {
-        const res = await getChunksByOrg(clientId);
+        const res = await getChunksByOrg(clientId!);
         console.log("Fetched knowledge base:", res);
         if (res.status === "success") {
           setKnowledgeBase(res.chunks || []);
@@ -57,11 +63,6 @@ export default function InboxContent() {
     chunkId?: string;
   } | null>(null);
   const [loadingAll, setLoadingAll] = useState(false);
-  const [toast, setToast] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
-  // Multi-select state
   const [selectMode, setSelectMode] = useState<{ [docId: string]: boolean }>(
     {}
   );
@@ -117,7 +118,7 @@ export default function InboxContent() {
         },
       ]);
       if (res.status === "success") {
-        setToast({ type: "success", message: "Chunk saved successfully" });
+        toast.success("Chunk saved successfully");
         setEditingChunks((prev) => {
           const docChunks = { ...prev[docId] };
           delete docChunks[chunkId];
@@ -127,10 +128,10 @@ export default function InboxContent() {
           return newState;
         });
       } else {
-        setToast({ type: "error", message: "Failed to save chunk" });
+        toast.error("Failed to save chunk");
       }
     } catch {
-      setToast({ type: "error", message: "Network error" });
+      toast.error("Network error");
     }
     setLoadingChunk(null);
   };
@@ -169,11 +170,10 @@ export default function InboxContent() {
     }
     setEditingChunks({});
     setLoadingAll(false);
-    setToast(
-      success
-        ? { type: "success", message: "All chunks submitted" }
-        : { type: "error", message: "Some chunks failed to submit" }
-    );
+
+    success
+      ? toast.success("All chunks submitted")
+      : toast.error("Some chunks failed to submit");
   };
 
   // Global reset all
@@ -206,7 +206,7 @@ export default function InboxContent() {
         text: addChunkData.content,
       });
       if (res.status === "success") {
-        setToast({ type: "success", message: "Chunk added" });
+        toast.success("Chunk added");
         setKnowledgeBase((prev) =>
           prev.map((d) =>
             d.documentId === addModal.docId
@@ -226,10 +226,10 @@ export default function InboxContent() {
         );
         setAddModal({ open: false, docId: undefined });
       } else {
-        setToast({ type: "error", message: "Failed to add chunk" });
+        toast.error("Failed to add chunk");
       }
     } catch {
-      setToast({ type: "error", message: "Network error" });
+      toast.error("Network error");
     }
     setAddLoading(false);
   };
@@ -259,12 +259,12 @@ export default function InboxContent() {
           channel: "web",
         });
         if (res.status === "success") {
-          setToast({ type: "success", message: "URL document added" });
+          toast.success("URL document added");
           setAddDocModal(false);
           setDocType(null);
           setUrlInput("");
         } else {
-          setToast({ type: "error", message: "Failed to add URL document" });
+          toast.error("Failed to add URL document");
         }
       } else if (docType === "file" && fileInput) {
         const res = await uploadFile({
@@ -278,16 +278,16 @@ export default function InboxContent() {
           channel: "web",
         });
         if (res.status === "success") {
-          setToast({ type: "success", message: "File document added" });
+          toast.success("File document added");
           setAddDocModal(false);
           setDocType(null);
           setFileInput(null);
         } else {
-          setToast({ type: "error", message: "Failed to add file document" });
+          toast.error("Failed to add file document");
         }
       }
     } catch {
-      setToast({ type: "error", message: "Network error" });
+      toast.error("Network error");
     }
     setAddDocLoading(false);
   };
@@ -350,10 +350,7 @@ export default function InboxContent() {
                             try {
                               const res = await deleteChunks(chunkIds);
                               if (res.status === "success") {
-                                setToast({
-                                  type: "success",
-                                  message: "Chunks deleted",
-                                });
+                                toast.success("Chunks deleted");
                                 setKnowledgeBase((prev) =>
                                   prev.map((d) =>
                                     d.documentId === doc.documentId
@@ -378,16 +375,10 @@ export default function InboxContent() {
                                   [doc.documentId]: false,
                                 }));
                               } else {
-                                setToast({
-                                  type: "error",
-                                  message: "Delete failed",
-                                });
+                                toast.error("Delete failed");
                               }
                             } catch {
-                              setToast({
-                                type: "error",
-                                message: "Network error",
-                              });
+                              toast.error("Network error");
                             }
                           }}
                         >
@@ -550,24 +541,6 @@ export default function InboxContent() {
                 Reset All
               </Button>
             </div>
-          </div>
-        )}
-        {/* Toast notification */}
-        {toast && (
-          <div
-            className={`fixed bottom-24 right-8 px-4 py-2 rounded shadow-lg z-50 ${
-              toast.type === "success"
-                ? "bg-emerald-600 text-white"
-                : "bg-red-600 text-white"
-            }`}
-          >
-            {toast.message}
-            <button
-              className="ml-4 text-xs underline"
-              onClick={() => setToast(null)}
-            >
-              Close
-            </button>
           </div>
         )}
       </div>

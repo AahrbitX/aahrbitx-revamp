@@ -36,20 +36,20 @@ const defaultSettingsNav = {
   items: [
     {
       title: "General",
-      url: "#",
+      url: "/dashboard/general",
     },
-    {
-      title: "Application",
-      url: "#",
-    },
-    {
-      title: "Billing",
-      url: "#",
-    },
-    {
-      title: "Limits",
-      url: "#",
-    },
+    // {
+    //   title: "Application",
+    //   url: "#",
+    // },
+    // {
+    //   title: "Billing",
+    //   url: "#",
+    // },
+    // {
+    //   title: "Limits",
+    //   url: "#",
+    // },
   ],
 };
 

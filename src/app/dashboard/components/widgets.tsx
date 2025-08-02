@@ -96,7 +96,7 @@ export function UserApplicationWidget() {
         ...internal_applications.map((app) => ({ ...app, source: "internal" })),
         ...external_applications.map((app) => ({ ...app, source: "external" })),
       ]);
-      console.log("user apps", internal_applications, external_applications);
+
       setLoading(false);
     };
     fetchData();

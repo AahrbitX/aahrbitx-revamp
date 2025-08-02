@@ -1,3 +1,4 @@
+import { BarChartHorizontal } from "@/app/dashboard/components/charts/bar-chart-horizontal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -20,21 +21,21 @@ export default function Billing() {
       {/* Top Stats */}
       <div className="grid grid-cols-4 gap-6 mb-8">
         <Card>
-          <CardContent className="p-6 text-center">
+          <CardContent className=" text-center">
             <div className="text-2xl font-bold text-white mb-2">$12,547</div>
             <div className="text-sm text-slate-400">Total Revenue</div>
             <div className="text-xs text-emerald-400 mt-1">▲ +18.3%</div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6 text-center">
+          <CardContent className=" text-center">
             <div className="text-2xl font-bold text-white mb-2">1,234</div>
             <div className="text-sm text-slate-400">Active Subscriptions</div>
             <div className="text-xs text-emerald-400 mt-1">▲ +6.7%</div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6 text-center">
+          <CardContent className=" text-center">
             <div className="text-2xl font-bold text-white mb-2">98,243</div>
             <div className="text-sm text-slate-400">
               API Requests (This Month)
@@ -43,7 +44,7 @@ export default function Billing() {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6 text-center">
+          <CardContent className=" text-center">
             <div className="text-2xl font-bold text-white mb-2">$128</div>
             <div className="text-sm text-slate-400">Current Bill</div>
             <div className="text-xs text-red-400 mt-1">● Due in 3 days</div>
@@ -61,25 +62,7 @@ export default function Billing() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-48 flex items-end justify-between space-x-2">
-              {[30, 45, 60, 75, 85, 90, 95, 100].map((height, index) => (
-                <div
-                  key={index}
-                  className="flex-1 bg-emerald-500 rounded-t"
-                  style={{ height: `${height}%` }}
-                ></div>
-              ))}
-            </div>
-            <div className="flex justify-between text-xs text-slate-400 mt-2">
-              <span>Jan</span>
-              <span>Feb</span>
-              <span>Mar</span>
-              <span>Apr</span>
-              <span>May</span>
-              <span>Jun</span>
-              <span>Jul</span>
-              <span>Aug</span>
-            </div>
+            <BarChartHorizontal />
           </CardContent>
         </Card>
 

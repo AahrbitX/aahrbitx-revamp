@@ -1,9 +1,8 @@
 export type CreatePaymentRequest = {
+  user_id: string;
+  org_id?: string;
   email: string;
-  phone: string;
   product_code: string;
-  product_name: string;
-  product_image: string;
   amount: string;
 };
 
@@ -15,12 +14,12 @@ export type CreatePaymentResponse = {
 };
 
 export type VerifyPaymentRequest = {
+  email: string;
+  user_id: string;
   razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
   transaction_id: string;
-  email: string;
-  phone: string;
 };
 
 export type VerifyPaymentRequestResponse = {};

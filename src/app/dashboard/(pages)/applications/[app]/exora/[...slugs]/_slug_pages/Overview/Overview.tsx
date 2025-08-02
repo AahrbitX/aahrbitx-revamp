@@ -87,6 +87,7 @@ export default function Overview() {
     setError("");
     try {
       const json = await getOrgUsage(AppUser?.id ?? "");
+      console.log("Org Usage Data:", json);
       setData(json);
     } catch (err: any) {
       setError(err?.message || "Unknown error");
@@ -99,14 +100,6 @@ export default function Overview() {
     fetchData();
     // eslint-disable-next-line
   }, []);
-
-  // Helper for usage chart
-  const usageChart = data?.daily_usage?.map(
-    (item: [string, number]) => item[1]
-  ) || [40, 60, 80, 90, 70, 85, 95, 100];
-  const usageLabels = data?.daily_usage?.map((item: [string, number]) =>
-    item[0].slice(5)
-  ) || ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
 
   return (
     <div className="p-6 @container">

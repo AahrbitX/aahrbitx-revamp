@@ -27,6 +27,8 @@ import { paymentOptions, prefillData } from "@/lib/payment";
 import { verifyPayment } from "@/actions/payment/verify-payment";
 import { updateApplication } from "@/actions/organizations/post/updateApplication";
 import { getApplicationData } from "@/actions/products/getApplicationData";
+import { subscribeToProduct } from "@/actions/payment/subscribe-to-product";
+import { Ripples } from "ldrs/react";
 
 const baseSchema = {
   appName: z.string().min(5, "Application name must be at least 5 characters"),
@@ -56,7 +58,7 @@ function NewApplicationFormPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const updatingApplicationId = searchParams.get("appId") || null;
+  const updatingApplicationId = searchParams.get("appId");
 
   const isValid = userOrganizations.some(
     (org) =>
@@ -69,22 +71,25 @@ function NewApplicationFormPage() {
   }
 
   const [updatingApplication, setUpdatingApplication] = useState<any>(null);
+  const [isAppLoading, setIsAppLoading] = useState(false);
 
   useEffect(() => {
     const fetchApplicationData = async () => {
       if (updatingApplicationId) {
+        setIsAppLoading(true);
         const response = await getApplicationData(updatingApplicationId);
         setUpdatingApplication(response);
+        setIsAppLoading(false);
       }
     };
     fetchApplicationData();
   }, [updatingApplicationId]);
 
-  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [productData, setProductData] = useState<any>(null);
   const [plans, setPlans] = useState<any[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [isProductLoading, setIsProductLoading] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && !(window as any).Razorpay) {
@@ -145,11 +150,10 @@ function NewApplicationFormPage() {
 
         // Proceed with payment only for creation
         const paymentCreationResponse = await createPayment({
+          user_id: AppUser.id!,
+          org_id: payload.orgId,
           email: prefillData.email,
-          phone: prefillData.phone,
           product_code: productData.code,
-          product_name: productData.name,
-          product_image: "https://example.com/image.png",
           amount: String(selectedPlan.price),
         });
 
@@ -176,10 +180,19 @@ function NewApplicationFormPage() {
                 razorpay_signature: res.razorpay_signature,
                 transaction_id: paymentCreationResponse.transaction_id,
                 email: prefillData.email,
-                phone: prefillData.phone,
+                user_id: AppUser.id!,
               });
 
+              // Create application after successful payment verification
               const orgViewRes = await createApplication(payload);
+
+              await subscribeToProduct({
+                org_id: orgViewRes.org_id,
+                app_id: orgViewRes.application_id,
+                transaction_id: paymentCreationResponse.transaction_id,
+                plan_name: selectedPlan.name,
+              });
+
               setUserOrganizationData((prev) => [...prev, orgViewRes]);
 
               toast.success("Application created successfully!", {
@@ -220,12 +233,13 @@ function NewApplicationFormPage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      if (updatingApplication !== null) return;
       try {
-        setLoading(true);
+        setIsProductLoading(true);
         const res = await getProducts();
         if (res) setProducts(res);
       } finally {
-        setLoading(false);
+        setIsProductLoading(false);
       }
     };
 
@@ -236,6 +250,10 @@ function NewApplicationFormPage() {
     acc[org.org_id!] = org.organization_name!;
     return acc;
   }, {} as Record<string, string>);
+
+  if (isAppLoading) {
+    return <div>Loading application data...</div>;
+  }
 
   return (
     <div className="p-6 rounded-lg shadow max-w-lg">
@@ -283,7 +301,7 @@ function NewApplicationFormPage() {
                   Organization
                 </Label>
                 <Select
-                  disabled={isValid}
+                  disabled={updatingApplication !== null}
                   value={field.state.value}
                   onValueChange={(val) => field.handleChange(val)}
                 >
@@ -307,7 +325,7 @@ function NewApplicationFormPage() {
 
           <form.Field name="subscribingProduct">
             {(field) => {
-              if (isValid) {
+              if (isValid && updatingApplication !== null) {
                 return;
               }
               return (
@@ -319,7 +337,7 @@ function NewApplicationFormPage() {
                     <Link href="/products">Products</Link>
                   </Label>
                   <Select
-                    disabled={loading}
+                    disabled={isProductLoading}
                     value={field.state.value}
                     onValueChange={(val) => {
                       field.handleChange(val);
