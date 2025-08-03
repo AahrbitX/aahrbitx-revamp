@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useParams } from "next/navigation";
+import { getApplicationData } from "@/actions/products/getApplicationData";
+import { fetchSubscriptionData } from "@/lib/api";
 import { BarChartComponent as BarChart } from "@/app/dashboard/components/charts/bar-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,22 +39,28 @@ export default function Billing() {
   const chartLabels = monthlyChartData.length > 0 ? monthlyChartData.map(d => d.month) : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
   const chartData = monthlyChartData.length > 0 ? monthlyChartData.map(d => d.value) : [40, 60, 80, 90, 70, 85, 95, 100];
 
+  const params = useParams();
   useEffect(() => {
     const fetchSubscription = async () => {
       try {
-        const res = await axios.get(
-          "https://payment-system-8t3y.onrender.com/create-subscription/?org_id=24f3059f-a07a-4894-9be1-1e39d81025f2"
-        );
-        setSubscriptionData(res.data);
+        let appId = params?.app;
+        if (!appId) throw new Error("App ID not found");
+        if (Array.isArray(appId)) {
+          appId = appId[0];
+        }
+        const appData = await getApplicationData(appId);
+        const orgId = appData?.org_id;
+        if (!orgId) throw new Error("Organization ID not found");
+        const data = await fetchSubscriptionData(orgId);
+        setSubscriptionData(data);
       } catch (error) {
         console.error("Failed to fetch subscription data", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchSubscription();
-  }, []);
+  }, [params?.app]);
 
   return (
     <div className="p-6">

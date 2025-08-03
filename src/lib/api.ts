@@ -1,3 +1,8 @@
+export async function fetchSubscriptionData(org_id: string) {
+  const res = await fetch(`https://payment-system-8t3y.onrender.com/create-subscription/?org_id=${org_id}`);
+  if (!res.ok) throw new Error("Failed to fetch subscription data");
+  return await res.json();
+}
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export async function createOrganisation({ name, domain, plan, user_id, email, user_name }: {

@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Settings, ExternalLink, Plus } from "lucide-react";
+import { Globe, ExternalLink, Plus } from "lucide-react";
 import { getApplicationData } from "@/actions/products/getApplicationData";
 import {
   IconBrandApplePodcast,
@@ -10,6 +9,7 @@ import {
   IconBrandYoutube,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import ClientSettingsButton from "./ClientSettingsButton";
 
 
 
@@ -71,14 +71,7 @@ export default function ChannelsContent() {
                   >
                     {channel.status}
                   </Badge>
-                  <Link
-                    href={`./${channel.name.toLowerCase()}`}
-                    passHref
-                  >
-                    <Button variant="ghost" size="icon" aria-label={`Settings for ${channel.name}`}>
-                      <Settings className="w-5 h-5 text-slate-400 hover:text-white" />
-                    </Button>
-                  </Link>
+                  <ClientSettingsButton channelName={channel.name} />
                 </div>
 
                 <div className="flex items-center justify-between text-sm">
