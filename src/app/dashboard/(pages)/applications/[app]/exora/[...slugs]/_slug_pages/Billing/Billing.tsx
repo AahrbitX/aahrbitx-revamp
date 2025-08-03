@@ -1,8 +1,59 @@
-import { BarChartHorizontal } from "@/app/dashboard/components/charts/bar-chart-horizontal";
+"use client";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { BarChartComponent as BarChart } from "@/app/dashboard/components/charts/bar-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { format } from "date-fns";
 
 export default function Billing() {
+  const [subscriptionData, setSubscriptionData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  function generateMonthlyData(subscription: any) {
+    if (!subscription?.start_date || !subscription?.monthly_price) return [];
+
+    const startDate = new Date(subscription.start_date);
+    const months = parseInt(subscription.period?.split(" ")[0] || "0", 10);
+    const monthlyPrice = subscription.monthly_price;
+
+    const data = [];
+    for (let i = 0; i < months; i++) {
+      const date = new Date(startDate);
+      date.setMonth(date.getMonth() + i);
+      data.push({
+        month: format(date, "MMM yyyy"),
+        value: monthlyPrice,
+      });
+    }
+    return data;
+  }
+
+  const monthlyChartData = subscriptionData
+    ? generateMonthlyData(subscriptionData.subscription)
+    : [];
+
+  const chartLabels = monthlyChartData.length > 0 ? monthlyChartData.map(d => d.month) : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
+  const chartData = monthlyChartData.length > 0 ? monthlyChartData.map(d => d.value) : [40, 60, 80, 90, 70, 85, 95, 100];
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        const res = await axios.get(
+          "https://payment-system-8t3y.onrender.com/create-subscription/?org_id=24f3059f-a07a-4894-9be1-1e39d81025f2"
+        );
+        setSubscriptionData(res.data);
+      } catch (error) {
+        console.error("Failed to fetch subscription data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubscription();
+  }, []);
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -21,57 +72,69 @@ export default function Billing() {
       {/* Top Stats */}
       <div className="grid grid-cols-4 gap-6 mb-8">
         <Card>
-          <CardContent className=" text-center">
-            <div className="text-2xl font-bold text-white mb-2">$12,547</div>
-            <div className="text-sm text-slate-400">Total Revenue</div>
-            <div className="text-xs text-emerald-400 mt-1">▲ +18.3%</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className=" text-center">
-            <div className="text-2xl font-bold text-white mb-2">1,234</div>
-            <div className="text-sm text-slate-400">Active Subscriptions</div>
-            <div className="text-xs text-emerald-400 mt-1">▲ +6.7%</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className=" text-center">
-            <div className="text-2xl font-bold text-white mb-2">98,243</div>
-            <div className="text-sm text-slate-400">
-              API Requests (This Month)
+          <CardContent className="text-center pt-6">
+            <div className="text-2xl font-bold text-white mb-2">
+              ${subscriptionData?.subscription?.amount ?? "—"}
             </div>
-            <div className="text-xs text-emerald-400 mt-1">▲ +11.4%</div>
+            <div className="text-sm text-slate-400">Subscription Cost</div>
+            <div className="text-xs text-emerald-400 mt-1">
+              Plan: {subscriptionData?.subscription?.plan_name ?? "—"}
+            </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className=" text-center">
-            <div className="text-2xl font-bold text-white mb-2">$128</div>
-            <div className="text-sm text-slate-400">Current Bill</div>
-            <div className="text-xs text-red-400 mt-1">● Due in 3 days</div>
+          <CardContent className="text-center pt-6">
+            <div className="text-2xl font-bold text-white mb-2">
+              {subscriptionData?.subscription?.subscription_status ?? "—"}
+            </div>
+            <div className="text-sm text-slate-400">Status</div>
+            <div className="text-xs text-emerald-400 mt-1">
+              Ends in {subscriptionData?.subscription?.remaining_days ?? "—"} days
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="text-center pt-6">
+            <div className="text-2xl font-bold text-white mb-2">
+              {subscriptionData?.subscription?.start_date ?? "—"}
+            </div>
+            <div className="text-sm text-slate-400">Start Date</div>
+            <div className="text-xs text-emerald-400 mt-1">
+              Expires on {subscriptionData?.subscription?.expires_on ?? "—"}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="text-center pt-6">
+            <div className="text-2xl font-bold text-white mb-2">
+              {subscriptionData?.Organisation?.org_name ?? "—"}
+            </div>
+            <div className="text-sm text-slate-400">Organization</div>
+            <div className="text-xs text-slate-400 mt-1">
+              Domain: {subscriptionData?.Organisation?.domain ?? "—"}
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Graph & Top Users/Platforms */}
+      {/* Graph & Top Usage Clients */}
       <div className="grid grid-cols-2 gap-6">
         {/* Usage Over Time */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg text-white">
-              Usage Over Time
-            </CardTitle>
+            <CardTitle className="text-lg text-white">Usage Over Time</CardTitle>
           </CardHeader>
           <CardContent>
-            <BarChartHorizontal />
+            {/* <BarChart data={monthlyChartData} /> */}
+            <BarChart chartLabels={chartLabels} chartData={chartData} />
           </CardContent>
         </Card>
 
-        {/* Top Usage Sources */}
-        <Card>
+
+        {/* Top Usage Clients */}
+        {/* <Card>
           <CardHeader>
-            <CardTitle className="text-lg text-white">
-              Top Usage Clients
-            </CardTitle>
+            <CardTitle className="text-lg text-white">Top Usage Clients</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {[
@@ -93,6 +156,37 @@ export default function Billing() {
                 </div>
               </div>
             ))}
+          </CardContent>
+        </Card> */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg text-white">
+              Subscription Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm text-slate-300">
+            <div className="flex justify-between">
+              <span className="text-white">Application</span>
+              <span>{subscriptionData?.application?.application_name ?? "—"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white">Organization</span>
+              <span>{subscriptionData?.Organisation?.org_name ?? "—"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white">Domain</span>
+              <span>{subscriptionData?.Organisation?.domain ?? "—"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white">Plan Name</span>
+              <span>{subscriptionData?.subscription?.plan_name ?? "—"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-white">Status</span>
+              <span className="capitalize">
+                {subscriptionData?.subscription?.subscription_status ?? "—"}
+              </span>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -40,6 +40,13 @@ export default function RootLayout({
       {children}
       <Footer />
       <ScrollToTop />
+
+    <script src="http://localhost:8000/static/config.js" defer></script>
+      <script
+        src="http://localhost:8000/static/widget.js"
+        data-client-id="24f3059f-a07a-4894-9be1-1e39d81025f2"
+        defer
+      ></script>
     </div>
   );
 }

@@ -6,7 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, RefreshCw } from "lucide-react";
 import { getOrgUsage } from "@/lib/api";
-import { useAuthOrg } from "@/providers/auth-org-provider";
+// import { useAuthOrg } from "@/providers/auth-org-provider";
+import { useParams } from "next/navigation";
+import { getApplicationData } from "@/actions/products/getApplicationData";
+import { json } from "zod";
 
 interface OrgUsage {
   total_sessions: number;
@@ -25,7 +28,9 @@ export default function Overview() {
   const [data, setData] = useState<OrgUsage | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { user: AppUser } = useAuthOrg();
+  // const { user: AppUser } = useAuthOrg();
+  const params = useParams();
+  // const [orgId, setOrgId] = useState<string>("");
 
   const topMetrices = [
     {
@@ -78,7 +83,11 @@ export default function Overview() {
     setLoading(true);
     setError("");
     try {
-      const json = await getOrgUsage(AppUser?.id ?? "");
+
+      const appId = params?.app;
+      const appData = await getApplicationData(appId as string);
+      let orgIdToUse = appData?.org_id || "";
+      const json = await getOrgUsage(orgIdToUse || "");
       setData(json);
     } catch (err: any) {
       setError(err?.message || "Unknown error");

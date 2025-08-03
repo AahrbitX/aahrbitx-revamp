@@ -26,8 +26,8 @@ async function ExoraSlugPages(props: ExoraSlugPagesProps) {
         return <ChannelsContent/>
     case "inbox":
         return <InboxContent/>
-    case "reports":
-        return <ReportsContent/>
+    // case "reports":
+    //     return <ReportsContent/>
     default:
         return notFound();
   }

@@ -151,8 +151,9 @@ export async function deepScrape({
   return await res.json();
 }
 
-export async function getOrgUsage(user_id: string) {
-  const res = await fetch(`${API_BASE_URL}/org-usage?user_id=${user_id}`, {
+export async function getOrgUsage(org_id: string) {
+  console.log("Fetching usage for org_id:", org_id);
+  const res = await fetch(`${API_BASE_URL}/org-usage?org_id=${org_id}`, {
     method: "GET",
   });
   if (!res.ok) throw new Error("Failed to fetch usage data");

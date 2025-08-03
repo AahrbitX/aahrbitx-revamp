@@ -34,6 +34,26 @@ export default function Overview() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { user: AppUser } = useAuthOrg();
+  const [chartType, setChartType] = useState<"daily" | "weekly" | "monthly">("weekly");
+
+  // Helper to get chart data/labels based on chartType
+  const getChartData = () => {
+    if (!data) return { chartData: [], chartLabels: [] };
+    let usage: number[] = [];
+    let labels: string[] = [];
+    if (chartType === "daily") {
+      usage = data.daily_usage.map(item => item[1]);
+      labels = data.daily_usage.map(item => item[0]);
+    } else if (chartType === "weekly") {
+      usage = data.weekly_usage.map(item => item[1]);
+      labels = data.weekly_usage.map(item => item[0]);
+    } else if (chartType === "monthly") {
+      usage = data.monthly_usage.map(item => item[1]);
+      labels = data.monthly_usage.map(item => item[0]);
+    }
+    return { chartData: usage, chartLabels: labels };
+  };
+  const { chartData, chartLabels } = getChartData();
 
   const topMetrices = [
     {
@@ -140,7 +160,18 @@ export default function Overview() {
           {/* Large Number Display */}
           <Card className="bg-card ">
             <CardContent className="p-6">
-              <BarChartComponent />
+              <div className="flex items-center justify-end mb-4">
+                <select
+                  value={chartType}
+                  onChange={e => setChartType(e.target.value as "daily" | "weekly" | "monthly")}
+                  className="bg-slate-700 text-white rounded px-2 py-1"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <BarChartComponent chartData={chartData} chartLabels={chartLabels} />
             </CardContent>
           </Card>
 
