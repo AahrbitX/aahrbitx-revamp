@@ -8,8 +8,7 @@ export default function ClientSettingsButton({ channelName }: { channelName: str
       variant="ghost"
       size="icon"
       aria-label={`Settings for ${channelName}`}
-      onClick={() => window.location.href = `./${channelName.toLowerCase()}`}
-    >
+      onClick={() => window.location.href = `./${channelName.toLowerCase()}`}>
       <Settings className="w-5 h-5 text-slate-400 hover:text-white" />
     </Button>
   );
