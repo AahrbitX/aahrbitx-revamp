@@ -116,7 +116,7 @@ export async function uploadFile({
   formData.append("file_type", file_type);
   formData.append("channel", channel);
 
-  const res = await fetch("http://localhost:8000/upload", {
+  const res = await fetch(`${API_BASE_URL}/upload`, {
     method: "POST",
     body: formData
   });
@@ -142,7 +142,7 @@ export async function deepScrape({
   file_type: string,
   channel: string
 }) {
-  const res = await fetch("http://localhost:8000/deep-scrape", {
+  const res = await fetch(`${API_BASE_URL}/deep-scrape`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
