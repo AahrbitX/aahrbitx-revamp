@@ -37,7 +37,7 @@ function ProductCard({ props }: { props: ProductCardProps }) {
       <CardContent>{/* <p>Price: ${props.price}</p> */}</CardContent>
       <CardFooter className=" space-x-2">
         <Button variant={"outline"} className="group">
-          <Settings className="group-hover:animate-spin " />
+          <Settings className="group-hover:rotate-90 transition-transform duration-600" />
           Config
         </Button>
         <Button variant={"outline"}>

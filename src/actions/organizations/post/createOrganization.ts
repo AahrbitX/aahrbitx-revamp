@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createDBClient } from "@/utils/supabase/DBclient";
 
 export const createOrganization = async (data: {
   name: string;
@@ -9,7 +9,7 @@ export const createOrganization = async (data: {
   address?: string;
   user_id: string;
 }) => {
-  const supabase = await createClient();
+  const supabase = createDBClient();
 
   const { data: OrgCreationData, error: OrgCreationErr } = await supabase
     .from("organisations")
@@ -42,6 +42,10 @@ export const createOrganization = async (data: {
 
   if (OrgUserMapErr) {
     throw new Error(OrgUserMapErr.message);
+  }
+
+  if (userOrgErr) {
+    throw new Error(userOrgErr.message);
   }
 
   return userOrgData;

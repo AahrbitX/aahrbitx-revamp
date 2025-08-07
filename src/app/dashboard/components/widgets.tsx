@@ -13,6 +13,7 @@ import { useAuthOrg } from "@/providers/auth-org-provider";
 import { UserOrganizationType } from "@/types/organizations/Organization";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { IconPackages } from "@tabler/icons-react";
 
 export function UserOrganizationWidget() {
   const { user } = useAuthOrg();
@@ -80,12 +81,11 @@ export function UserOrganizationWidget() {
     </div>
   );
 }
-
 export function UserApplicationWidget() {
   const { user } = useAuthOrg();
 
-  const [applications, setApplications] = useState<any>([]);
   const [loading, setLoading] = useState(true);
+  const [applications, setApplications] = useState<any>([]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -138,26 +138,34 @@ export function UserApplicationWidget() {
               <p>Start by creating an application</p>
             </div>
           ) : (
-            <ul className="space-y-2 w-full">
+            <ul className="w-full flex flex-wrap gap-2 justify-start">
               {validApplications.map(
                 (app: UserOrganizationType & { source: string }) => (
                   <li
                     key={app.application_id}
-                    className=" border border-gray-300 dark:border-neutral-700 px-3 py-2 rounded-lg hover:bg-white dark:hover:bg-neutral-700 transition-colors duration-200 cursor-pointer"
+                    className="group relative overflow-hidden rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-white/60 dark:bg-neutral-900/40 p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-cyan-500 dark:hover:border-cyan-400 w-40"
                   >
                     <Link
-                      className="flex items-center justify-between"
                       href={`/dashboard/applications/${app.application_id}`}
+                      className="flex flex-col items-center text-center gap-3"
                     >
-                      <span className="font-medium">
+                      <div className="rounded-xl bg-cyan-600/20 p-4 text-cyan-200 group-hover:bg-cyan-600/30">
+                        <IconPackages size={28} />
+                      </div>
+
+                      <span className="text-sm font-medium text-neutral-800 dark:text-neutral-200 line-clamp-1">
                         {app.application_name}
                       </span>
+
                       <Badge
-                        className={
+                        className={`
+                        text-xs px-2 py-0.5 rounded-full border-2 
+                        ${
                           app.source === "internal"
-                            ? "bg-emerald-500/50 border-emerald-500 border-2 text-emerald-100"
-                            : "bg-red-500/50 border-red-500 border-2 text-red-100"
+                            ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-200 border-emerald-400"
+                            : "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-200 border-red-400"
                         }
+                      `}
                       >
                         {app.source}
                       </Badge>

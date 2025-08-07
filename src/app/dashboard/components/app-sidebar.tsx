@@ -36,7 +36,7 @@ const defaultSettingsNav = {
   items: [
     {
       title: "General",
-      url: "/dashboard/general",
+      url: "/dashboard/settings/general",
     },
     // {
     //   title: "Application",

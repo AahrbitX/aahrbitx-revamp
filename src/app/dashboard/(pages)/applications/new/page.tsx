@@ -189,8 +189,8 @@ function NewApplicationFormPage() {
               await subscribeToProduct({
                 org_id: orgViewRes.org_id,
                 app_id: orgViewRes.application_id,
-                transaction_id: paymentCreationResponse.transaction_id,
                 plan_name: selectedPlan.name,
+                transaction_id: paymentCreationResponse.transaction_id,
               });
 
               setUserOrganizationData((prev) => [...prev, orgViewRes]);

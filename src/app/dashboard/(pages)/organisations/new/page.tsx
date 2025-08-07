@@ -20,9 +20,10 @@ const formSchema = z.object({
     .min(
       5,
       "Organisation name is required and should be at least 5 characters long"
-    ),
+    )
+    .max(12, "Organisation name should not exceed 12 characters"),
   domain: z.string().min(1, "Domain Name Required"),
-  orgEmail: z.string().email("Invalid email address"),
+  orgEmail: z.email("Invalid email address"),
   orgAddress: z.string().optional(),
   contact_no: z.string().optional(),
   shouldReceiveProductUpdates: z.boolean().default(false),
@@ -44,14 +45,6 @@ function NewOrganisationCreationPage() {
   const isAuthorized = userOrganizationData.some(
     (org) => org.org_id === orgId && org.user_role === "superadmin"
   );
-
-  if (!isAuthorized) {
-    return (
-      <div className="">
-        You do not have permission to create or edit organizations.
-      </div>
-    );
-  }
 
   const [editingOrganization, setEditingOrganization] = useState<any>(null);
 
@@ -104,15 +97,20 @@ function NewOrganisationCreationPage() {
           toast.success("Organisation Data updated successfully!", {
             description: "You can edit the organization details further.",
           });
+          // Redirect to the updated organization page
+          router.push(`/dashboard/organisations/${orgId}`);
         } else {
           const orgUserMapData = await createOrganization(payload);
+
           setUserOrganizationData([...userOrganizationData, orgUserMapData]);
 
           toast.success("Organisation created successfully!", {
             description: "You can now add Applications to your organisation.",
           });
+
+          // Redirect to the new organization page
+          router.push(`/dashboard/organisations/${orgUserMapData.org_id}`);
         }
-        router.push("/dashboard");
       } catch (error) {
         console.log("Error creating/updating organization:", error);
         toast.error("Network error. Please try again later.");
@@ -123,6 +121,14 @@ function NewOrganisationCreationPage() {
       onChange: formSchema,
     },
   });
+
+  if (!isAuthorized && editingOrganization) {
+    return (
+      <div className="">
+        You do not have permission to create or edit organizations.
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 rounded-lg shadow max-w-lg">

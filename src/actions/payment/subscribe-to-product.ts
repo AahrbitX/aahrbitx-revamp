@@ -16,9 +16,10 @@ export const subscribeToProduct = async (req: {
     body: JSON.stringify(req),
   });
 
-  //   console.log("Payment creation response:", response);
-
   if (!response.ok) {
+    console.error("Failed to create subscription:", response.statusText);
+    const errorData = await response.json();
+    console.error("Error details:", errorData);
     throw new Error("Failed to create subscription");
   }
 

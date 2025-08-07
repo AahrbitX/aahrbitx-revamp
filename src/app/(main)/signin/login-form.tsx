@@ -38,12 +38,13 @@ export function LoginForm({
     if (appUser) {
       setUser(appUser);
       const orgData = await getUserOrgData(appUser?.id!);
+      console.log("User organization data:", orgData);
       setUserOrganizationData(orgData);
     }
 
     setIsPending(false);
 
-    router.push("/dashboard");
+    window.location.href = "/dashboard"; // Redirect to dashboard after login with reload
   };
 
   return (

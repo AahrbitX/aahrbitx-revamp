@@ -23,7 +23,7 @@ async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
   // }
 
   const orgData = await getOrganisationData(currentOrg);
-  const products = await getProducts();
+  // const products = await getProducts();
 
   if (!orgData) {
     notFound();
@@ -47,7 +47,7 @@ async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
           </Link>
         </Button>
       </div>
-      <div className="my-4">
+      {/* <div className="my-4">
         <h2 className="text-xl font-semibold mb-4">Applications</h2>
         <div className="grid @lg:grid-cols-2 @2xl:grid-cols-3">
           {products ? (
@@ -58,8 +58,8 @@ async function OrgDataPage({ params }: { params: Promise<{ org: string }> }) {
             <p>No products found.</p>
           )}
         </div>
-      </div>
-      <div>
+      </div> */}
+      <div className="mt-4">
         <h2 className="text-xl font-semibold mb-2">
           Your Organization Details
         </h2>
