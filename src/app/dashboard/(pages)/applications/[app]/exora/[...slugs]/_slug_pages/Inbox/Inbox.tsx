@@ -22,12 +22,14 @@ import { toast } from "sonner";
 //   loadingKB: boolean;
 // }
 
+
 export default function InboxContent() {
   // Per-chunk edit state
 
   const { currentSelector } = useAuthOrg();
   const [knowledgeBase, setKnowledgeBase] = useState<any[]>([]);
   const [loadingKB, setLoadingKB] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const clientId = currentSelector?.org_id;
 
   if (!clientId) {
@@ -293,23 +295,49 @@ export default function InboxContent() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-6 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-6 bg-background sticky top-0 z-10 py-4 px-6">
         <h1 className="text-2xl font-bold text-white">Knowledge Base</h1>
-        <div className="flex items-center space-x-4">
-          <Input placeholder="Search messages..." className=" w-64" />
+      <div className="flex items-center space-x-4">
+          <Input
+            placeholder="Search documents..."
+            className="w-64"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
           <Button variant="secondary" onClick={() => setAddDocModal(true)}>
             <BookDashed /> Add Document
           </Button>
+          <Button variant="ghost" onClick={() => {
+            setLoadingKB(true);
+            (async function fetchKB() {
+              try {
+                const res = await getChunksByOrg(clientId!);
+                if (res.status === "success") {
+                  setKnowledgeBase(res.chunks || []);
+                }
+              } catch (e) {
+                // handle error
+              } finally {
+                setLoadingKB(false);
+              }
+            })();
+          }}>
+            Refresh
+          </Button>
         </div>
       </div>
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 flex-1 overflow-y-auto">
         {loadingKB ? (
           <div className="text-slate-400">Loading...</div>
         ) : knowledgeBase.length === 0 ? (
           <div className="text-slate-400">No documents found.</div>
         ) : (
-          knowledgeBase.map((doc: any) => {
+          knowledgeBase
+            .filter(doc =>
+              doc.title?.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((doc: any) => {
             const isSelectMode = selectMode[doc.documentId] || false;
             const selectedSet = selectedChunks[doc.documentId] || new Set();
             return (

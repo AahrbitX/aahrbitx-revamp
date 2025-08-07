@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -12,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, RefreshCw } from "lucide-react";
 import { getOrgUsage } from "@/lib/api";
+import { getApplicationData } from "@/actions/products/getApplicationData";
 import { useAuthOrg } from "@/providers/auth-org-provider";
 import { RadialChartComponent } from "@/app/dashboard/components/charts/radial-chart";
 import { BarChartComponent } from "@/app/dashboard/components/charts/bar-chart";
@@ -33,7 +35,27 @@ export default function Overview() {
   const [data, setData] = useState<OrgUsage | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { user: AppUser } = useAuthOrg();
+  const params = useParams();
+  const [chartType, setChartType] = useState<"daily" | "weekly" | "monthly">("weekly");
+
+  // Helper to get chart data/labels based on chartType
+  const getChartData = () => {
+    if (!data) return { chartData: [], chartLabels: [] };
+    let usage: number[] = [];
+    let labels: string[] = [];
+    if (chartType === "daily") {
+      usage = data.daily_usage.map(item => item[1]);
+      labels = data.daily_usage.map(item => item[0]);
+    } else if (chartType === "weekly") {
+      usage = data.weekly_usage.map(item => item[1]);
+      labels = data.weekly_usage.map(item => item[0]);
+    } else if (chartType === "monthly") {
+      usage = data.monthly_usage.map(item => item[1]);
+      labels = data.monthly_usage.map(item => item[0]);
+    }
+    return { chartData: usage, chartLabels: labels };
+  };
+  const { chartData, chartLabels } = getChartData();
 
   const topMetrices = [
     {
@@ -86,8 +108,18 @@ export default function Overview() {
     setLoading(true);
     setError("");
     try {
-      const json = await getOrgUsage(AppUser?.id ?? "");
+      let appId = params?.app;
+      if (!appId) throw new Error("App ID not found");
+      if (Array.isArray(appId)) {
+        appId = appId[0];
+      }
+      const appData = await getApplicationData(appId);
+      const orgId = appData?.org_id;
+      if (!orgId) throw new Error("Organization ID not found");
+
+      const json = await getOrgUsage(orgId);
       console.log("Org Usage Data:", json);
+      
       setData(json);
     } catch (err: any) {
       setError(err?.message || "Unknown error");
@@ -140,7 +172,18 @@ export default function Overview() {
           {/* Large Number Display */}
           <Card className="bg-card ">
             <CardContent className="p-6">
-              <BarChartComponent />
+              <div className="flex items-center justify-end mb-4">
+                <select
+                  value={chartType}
+                  onChange={e => setChartType(e.target.value as "daily" | "weekly" | "monthly")}
+                  className="bg-slate-700 text-white rounded px-2 py-1"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <BarChartComponent chartData={chartData} chartLabels={chartLabels} />
             </CardContent>
           </Card>
 

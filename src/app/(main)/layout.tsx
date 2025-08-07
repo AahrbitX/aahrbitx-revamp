@@ -40,6 +40,13 @@ export default function RootLayout({
       {children}
       <Footer />
       <ScrollToTop />
+
+      <script src="https://api.aahrbitx.in/static/config.js" defer></script>
+      <script
+      src="https://api.aahrbitx.in/static/widget.js"
+      data-client-id="24f3059f-a07a-4894-9be1-1e39d81025f2"
+      defer
+      ></script>
     </div>
   );
 }

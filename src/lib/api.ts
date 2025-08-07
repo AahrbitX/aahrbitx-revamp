@@ -1,4 +1,12 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const PAYMENT_BASE_URL = process.env.NEXT_PUBLIC_PAYMENT_BACKEND_URL || "http://localhost:8000";
+
+
+export async function fetchSubscriptionData(org_id: string) {
+  const res = await fetch(`${PAYMENT_BASE_URL}/create-subscription/?org_id=${org_id}`);
+  if (!res.ok) throw new Error("Failed to fetch subscription data");
+  return await res.json();
+}
 
 export async function createOrganisation({ name, domain, plan, user_id, email, user_name }: {
   name: string,
@@ -108,7 +116,7 @@ export async function uploadFile({
   formData.append("file_type", file_type);
   formData.append("channel", channel);
 
-  const res = await fetch("http://localhost:8000/upload", {
+  const res = await fetch(`${API_BASE_URL}/upload`, {
     method: "POST",
     body: formData
   });
@@ -134,7 +142,7 @@ export async function deepScrape({
   file_type: string,
   channel: string
 }) {
-  const res = await fetch("http://localhost:8000/deep-scrape", {
+  const res = await fetch(`${API_BASE_URL}/deep-scrape`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -151,8 +159,9 @@ export async function deepScrape({
   return await res.json();
 }
 
-export async function getOrgUsage(user_id: string) {
-  const res = await fetch(`${API_BASE_URL}/org-usage?user_id=${user_id}`, {
+export async function getOrgUsage(org_id: string) {
+  console.log("Fetching usage for org_id:", org_id);
+  const res = await fetch(`${API_BASE_URL}/org-usage?org_id=${org_id}`, {
     method: "GET",
   });
   if (!res.ok) throw new Error("Failed to fetch usage data");
