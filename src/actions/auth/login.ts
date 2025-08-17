@@ -22,7 +22,7 @@ export async function login(formData: FormData) {
   console.log('Login error:', error)
 
   if (error) {
-    return  { data : null, error: error.message }
+    return { error: error.message, appUser: null }
   }
 
   const appUser = await getCurrUser(loginData.user!.id);
@@ -30,7 +30,6 @@ export async function login(formData: FormData) {
   revalidatePath('/', 'layout')
   
   return {
-    data: loginData,
     error: null,
     appUser
   };

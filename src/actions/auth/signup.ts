@@ -2,11 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import getCurrUser from "../user/getCurrUser";
-import { createClient } from "@/utils/supabase/server";
+import { signUpWithCustomRedirect } from "@/utils/supabase/custom-auth";
 
 export async function signup(formData: FormData) {
-  const supabase = await createClient();
-
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
@@ -16,7 +14,7 @@ export async function signup(formData: FormData) {
 
   console.log("Signup data:", data);
 
-  const { data: signupData, error } = await supabase.auth.signUp(data);
+  const { data: signupData, error } = await signUpWithCustomRedirect(data.email, data.password);
 
   if (error) {
     return { data: null, error: error.message };
