@@ -77,15 +77,6 @@ src/
 - **App Domain**: `https://app.aahrbitx.in`
 - **Main Site**: `https://aahrbitx.in`
 
-## ⚠️ Why We Need Custom Signup
-
-**Important**: We cannot use the original Supabase signup because:
-
-- **Original signup**: Sends emails with `supabase.co` URLs → causes URL mismatches
-- **Custom signup**: Sends emails with your domain → solves the problem completely
-
-The `signUpWithCustomRedirect()` function is **essential** - it tells Supabase to use your domain in verification emails instead of their default URLs.
-
 ## 🎨 Customization
 
 ### Change Redirect URLs
@@ -131,7 +122,6 @@ urls: {
 1. **DNS Not Propagated**: Wait 24-48 hours for DNS changes
 2. **CORS Errors**: Ensure your API route handles CORS properly
 3. **Redirect Loops**: Check that verification URLs are correct
-4. **Signup Not Working**: Ensure you're using `signUpWithCustomRedirect()`, not the original Supabase client
 
 ### Debug Steps
 
@@ -139,7 +129,6 @@ urls: {
 2. Verify environment variables are set correctly
 3. Check Supabase logs for auth errors
 4. Test API endpoint directly: `/api/verify?token=test&type=signup`
-5. Verify signup is using custom auth client
 
 ## 🔒 Security Considerations
 
@@ -161,10 +150,5 @@ urls: {
 ✅ **Professional Appearance**: No more generic Supabase URLs  
 ✅ **Easy Maintenance**: Centralized configuration in `config.ts`  
 ✅ **Environment Aware**: Different URLs for dev/prod  
-✅ **Complete Solution**: Both signup emails AND verification flow use your domain  
 
-Your users will now have a **completely professional, branded authentication experience**! 🚀
-
-## 💡 Key Takeaway
-
-**Don't skip the custom signup** - it's the foundation that makes everything work. Without it, users still see Supabase URLs in emails, which defeats the purpose of the proxy solution.
+Your users will now have a professional, branded authentication experience! 🚀

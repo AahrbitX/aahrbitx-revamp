@@ -25,17 +25,26 @@ export async function GET(request: NextRequest) {
       redirect: "manual" 
     });
 
-    // Log the response for debugging
-    console.log("Supabase verification response:", {
+    // Enhanced logging for production debugging
+    const responseInfo = {
       status: response.status,
       statusText: response.statusText,
-      headers: Object.fromEntries(response.headers.entries())
-    });
+      headers: Object.fromEntries(response.headers.entries()),
+      url: response.url,
+      redirected: response.redirected,
+      type: response.type
+    };
+    
+    console.log("🔍 Supabase verification response:", responseInfo);
+    console.log("📍 Token:", token);
+    console.log("📍 Type:", type);
+    console.log("📍 Supabase URL:", supabaseUrl);
 
     // Supabase verification can return various success statuses
-    if (response.status === 302 || response.status === 200 || response.status === 204) {
+    if (response.ok){
       // Success - redirect to dashboard
-      console.log("Verification successful, redirecting to dashboard");
+      console.log("✅ Verification successful, redirecting to dashboard");
+      console.log("🎯 Redirect URL:", config.dashboardUrl);
       return NextResponse.redirect(config.dashboardUrl, 302);
     } else {
       // Get error details for debugging
@@ -46,11 +55,24 @@ export async function GET(request: NextRequest) {
         errorText = "Could not read error response";
       }
       
-      console.error("Verification failed:", {
+      console.error("❌ Verification failed:", {
         status: response.status,
         statusText: response.statusText,
-        error: errorText
+        error: errorText,
+        token: token?.substring(0, 10) + "...", // Log first 10 chars for security
+        type: type
       });
+      
+      // Log specific error types for debugging
+      if (response.status === 400) {
+        console.error("🚨 Bad Request - Check token format and type");
+      } else if (response.status === 401) {
+        console.error("🚨 Unauthorized - Token might be expired or invalid");
+      } else if (response.status === 404) {
+        console.error("🚨 Not Found - Check Supabase URL and endpoint");
+      } else if (response.status === 500) {
+        console.error("🚨 Server Error - Supabase internal error");
+      }
       
       // Redirect to error page
       return NextResponse.redirect(config.verificationErrorUrl, 302);
