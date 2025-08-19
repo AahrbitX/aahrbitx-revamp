@@ -164,7 +164,7 @@ export default function Billing() {
                 className="border-slate-600 text-white bg-transparent hover:bg-slate-700/50 transition-colors"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Downloa
+                Download Invoice
               </Button>
             </div>
           </motion.div>
