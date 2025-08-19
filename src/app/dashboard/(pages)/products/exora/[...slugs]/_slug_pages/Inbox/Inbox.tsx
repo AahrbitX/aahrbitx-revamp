@@ -13,6 +13,7 @@ import {
   uploadFile,
 } from "@/lib/api";
 import { useAuthOrg } from "@/providers/auth-org-provider"; // Add this import
+import { SkeletonHeader, SkeletonCard, SkeletonList } from "@/components/ui/skeleton";
 
 // interface InboxContentProps {
 //   knowledgeBase: any[];
@@ -293,25 +294,33 @@ export default function InboxContent() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">Knowledge Base</h1>
-        <div className="flex items-center space-x-4">
-          <Input
-            placeholder="Search messages..."
-            className="bg-[#1e293b] border-slate-600 text-white w-64"
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAddDocModal(true)}
-          >
-            Add Document
-          </Button>
+      {loadingKB ? (
+        <SkeletonHeader />
+      ) : (
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-white">Knowledge Base</h1>
+          <div className="flex items-center space-x-4">
+            <Input
+              placeholder="Search messages..."
+              className="bg-[#1e293b] border-slate-600 text-white w-64"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAddDocModal(true)}
+            >
+              Add Document
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
       <div className="p-4 space-y-6">
         {loadingKB ? (
-          <div className="text-slate-400">Loading...</div>
+          <div className="space-y-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
         ) : knowledgeBase.length === 0 ? (
           <div className="text-slate-400">No documents found.</div>
         ) : (
